@@ -17,13 +17,19 @@ namespace SUR
         {
             if (Input.GetKeyDown(KeyCode.Mouse0) && playerInRange && SelectionManager.Instance.onTarget)
             {
-                Debug.Log("Item added to Inventory");
-
-                Destroy(this.gameObject);
-            }
-            
-
+                // if the inventory is not full
+                if (!InventorySystem.Instance.CheckIfFull())
+                {
+                    InventorySystem.Instance.AddToInventory(ItemName);
+                    Destroy(this.gameObject);
+                }
+                else
+                {
+                    Debug.Log("Inventory is Full");
+                }
+            }          
         }
+
         private void OnTriggerEnter(Collider col)
         {
             if(col.CompareTag("Player"))
