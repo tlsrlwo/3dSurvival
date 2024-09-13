@@ -15,7 +15,7 @@ namespace SUR
         }
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Mouse0) && playerInRange && SelectionManager.Instance.onTarget)
+            if (Input.GetKeyDown(KeyCode.Mouse0) && playerInRange && SelectionManager.Instance.onTarget && SelectionManager.Instance.selectedObject == gameObject)
             {
                 // if the inventory is not full
                 if (!InventorySystem.Instance.CheckIfFull())

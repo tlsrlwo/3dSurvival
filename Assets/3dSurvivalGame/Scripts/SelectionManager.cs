@@ -11,11 +11,13 @@ namespace SUR
     {
         public static SelectionManager Instance { get; set; }
 
+        public bool onTarget;
+
+        public GameObject selectedObject;
 
         public GameObject interaction_Info_UI;
         TextMeshProUGUI interaction_text;       
 
-        public bool onTarget;
 
         private void Awake()
         {
@@ -48,7 +50,7 @@ namespace SUR
                 if (Interactable && Interactable.playerInRange) 
                 {
                     onTarget = true;
-
+                    selectedObject = Interactable.gameObject; 
                     interaction_text.text = Interactable.GetItemName();
                     interaction_Info_UI.SetActive(true);
                 }
