@@ -540,6 +540,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fd20dd41ee8bcf459d0d04c05729873, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  craftingScreenUI: {fileID: 419480857}
+  toolScreenUI: {fileID: 220998020}
+  inventoryItemList: []
+  isOpen: 0
 --- !u!1 &216970509
 GameObject:
   m_ObjectHideFlags: 0
@@ -588,7 +592,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &220998021
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3650,7 +3654,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1452236234
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4462,7 +4466,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1764689048
 RectTransform:
   m_ObjectHideFlags: 0

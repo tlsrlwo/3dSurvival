@@ -21,7 +21,7 @@ namespace SUR
         // Requirement Text
         Text AxeReq1, AxeReq2;
 
-        bool isOpen;
+        public bool isOpen;
 
         // All Blueprint
 
@@ -30,7 +30,7 @@ namespace SUR
 
         private void Awake()
         {
-            if(Instance == null && Instance != this)
+            if(Instance != null && Instance != this)
             {
                 Destroy(gameObject);
             }
@@ -43,13 +43,59 @@ namespace SUR
         // Start is called before the first frame update
         void Start()
         {
-        
+            isOpen = false;
+
+            toolsBTN = craftingScreenUI.transform.Find("ToolsButton").GetComponent<Button>();
+            toolsBTN.onClick.AddListener(delegate { OpenToolsCategory(); });
+
+            // Axe
+            AxeReq1 = toolScreenUI.transform.Find("Axe").transform.Find("req1").GetComponent<Text>();
+            AxeReq1 = toolScreenUI.transform.Find("Axe").transform.Find("req2").GetComponent<Text>();
+
+            craftAxeBTN = toolScreenUI.transform.Find("Axe").transform.Find("Button").GetComponent <Button>();
+            craftAxeBTN.onClick.AddListener(delegate { CraftAnyItem(); });
+        }
+
+        void OpenToolsCategory()
+        {
+            craftingScreenUI.SetActive(false);
+            toolScreenUI.SetActive(true);
+        }
+
+        void CraftAnyItem()
+        {
+            // add item into inventory
+
+
+            // remove resources from intentory (b/c its used)
+
+
+
+
+
         }
 
         // Update is called once per frame
         void Update()
         {
-        
+            if (Input.GetKeyDown(KeyCode.C) && !isOpen)
+            {
+
+                Debug.Log("C is pressed");
+
+                craftingScreenUI.SetActive(true);
+                Cursor.lockState = CursorLockMode.None;
+                isOpen = true;
+
+            }
+            else if (Input.GetKeyDown(KeyCode.C) && isOpen)
+            {
+                craftingScreenUI.SetActive(false);
+                toolScreenUI.SetActive(false);
+                Cursor.lockState = CursorLockMode.Locked;
+                isOpen = false;
+            }
+
         }
     }
 }
