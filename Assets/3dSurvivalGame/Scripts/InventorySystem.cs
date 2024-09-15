@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace SUR
 {
@@ -21,7 +22,13 @@ namespace SUR
         private GameObject whatSlotToEquip;
 
         public bool isOpen;
-        //public bool isFull;
+        public bool isFull;
+
+        // PickUpPopUp
+        public GameObject pickupAlert;
+        public Text pickupName;
+        public Image pickupImage;
+
 
 
         private void Awake()
@@ -79,18 +86,29 @@ namespace SUR
             }
         }
 
-        public void AddToInventory(string itemName)         
-        {            
-                whatSlotToEquip = FindNextEmptySlot();
-                               
-                itemToAdd = Instantiate(Resources.Load<GameObject>(itemName), whatSlotToEquip.transform.position, whatSlotToEquip.transform.rotation);
-                itemToAdd.transform.SetParent(whatSlotToEquip.transform);
+        public void AddToInventory(string itemName)
+        {
+            whatSlotToEquip = FindNextEmptySlot();
 
-                itemList.Add(itemName);
+            itemToAdd = Instantiate(Resources.Load<GameObject>(itemName), whatSlotToEquip.transform.position, whatSlotToEquip.transform.rotation);
+            Sprite sprite = itemToAdd.GetComponent<Image>().sprite;
+
+            itemToAdd.transform.SetParent(whatSlotToEquip.transform);
+            itemList.Add(itemName);
+
+            TriggerPickupPopup(itemName, sprite);
 
             ReCalculateList();
             CraftingSystem.Instance.RefreshNeededItems();
 
+        }
+
+        void TriggerPickupPopup(string itemName, Sprite itemSprite)
+        {
+            pickupAlert.SetActive(true);
+
+            pickupName.text = itemName + " Added To Inventory";
+            pickupImage.sprite = itemSprite;
         }
 
         
