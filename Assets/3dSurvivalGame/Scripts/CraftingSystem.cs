@@ -80,28 +80,22 @@ namespace SUR
 
             // refresh list
             StartCoroutine(calculate());
-
-            // 
-            RefreshNeededItems();
-
         }
 
         public IEnumerator calculate()
         {
-            yield return new WaitForSeconds(1f);
+            yield return 0;
 
             InventorySystem.Instance.ReCalculateList();
+
+            RefreshNeededItems();
         }
 
         
         void Update()
         {
-           
-
             if (Input.GetKeyDown(KeyCode.C) && !isOpen)
             {
-                RefreshNeededItems();
-
                 Debug.Log("C is pressed");
 
                 craftingScreenUI.SetActive(true);
@@ -119,11 +113,9 @@ namespace SUR
                 }
                 isOpen = false;
             }
-
-
         }
 
-        private void RefreshNeededItems()
+        public void RefreshNeededItems()
         {
             int stone_count = 0;
             int stick_count = 0;

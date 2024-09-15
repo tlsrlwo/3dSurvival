@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 7005853681750112671}
   m_Layer: 0
   m_Name: Stick
-  m_TagString: Untagged
+  m_TagString: Pickable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -75,7 +75,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 6.98, y: 1, z: 7.39}
+  m_Size: {x: 8.28, y: 1, z: 7.87}
   m_Center: {x: -0.78, y: 0, z: 0}
 --- !u!114 &7005853681750112671
 MonoBehaviour:

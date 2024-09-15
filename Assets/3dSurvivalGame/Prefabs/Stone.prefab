@@ -180,7 +180,7 @@ GameObject:
   - component: {fileID: 1066222673701605730}
   m_Layer: 0
   m_Name: Stone
-  m_TagString: Untagged
+  m_TagString: Pickable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

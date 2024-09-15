@@ -40,8 +40,7 @@ namespace SUR
         void Start()
         {
             inventoryScreenUI.SetActive(false);
-            isOpen = false;
-            
+            isOpen = false;          
 
             PopulateSlotList();
         }
@@ -87,7 +86,11 @@ namespace SUR
                 itemToAdd = Instantiate(Resources.Load<GameObject>(itemName), whatSlotToEquip.transform.position, whatSlotToEquip.transform.rotation);
                 itemToAdd.transform.SetParent(whatSlotToEquip.transform);
 
-                itemList.Add(itemName);            
+                itemList.Add(itemName);
+
+            ReCalculateList();
+            CraftingSystem.Instance.RefreshNeededItems();
+
         }
 
         
@@ -145,6 +148,8 @@ namespace SUR
                     }
                 }
             }
+            ReCalculateList();
+            CraftingSystem.Instance.RefreshNeededItems();
         }
 
         public void ReCalculateList()
@@ -164,6 +169,5 @@ namespace SUR
                 }
             }
         }
-
     }
 }

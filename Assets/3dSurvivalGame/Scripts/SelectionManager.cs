@@ -16,7 +16,11 @@ namespace SUR
         public GameObject selectedObject;
 
         public GameObject interaction_Info_UI;
-        TextMeshProUGUI interaction_text;       
+        TextMeshProUGUI interaction_text;
+
+        // Interact 가능한 아이템이면 조준점이 바뀌는 부분
+        public Image centerDotImage;
+        public Image handIcon;
 
 
         private void Awake()
@@ -53,11 +57,26 @@ namespace SUR
                     selectedObject = Interactable.gameObject; 
                     interaction_text.text = Interactable.GetItemName();
                     interaction_Info_UI.SetActive(true);
+
+                    if(Interactable.CompareTag("Pickable") )
+                    {
+                        centerDotImage.gameObject.SetActive(false);
+                        handIcon.gameObject.SetActive(true);
+                    }
+                    else
+                    {
+                        handIcon.gameObject.SetActive(false);
+                        centerDotImage.gameObject.SetActive(true);
+                    }
+
+
                 }
                 else // ray 가 사물에 부딪혔지만 InteractableObjects 가 없는 경우
                 {
                     onTarget= false;
-                    interaction_Info_UI.SetActive(false);                       
+                    interaction_Info_UI.SetActive(false);
+                    handIcon.gameObject.SetActive(false);
+                    centerDotImage.gameObject.SetActive(true);
                 }
 
             }
@@ -65,6 +84,8 @@ namespace SUR
             {
                 onTarget = false;
                 interaction_Info_UI.SetActive(false);
+                handIcon.gameObject.SetActive(false);
+                centerDotImage.gameObject.SetActive(true);
             }
         }
     }
