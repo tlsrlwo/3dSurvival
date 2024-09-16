@@ -28,7 +28,7 @@ namespace SUR
         public GameObject pickupAlert;
         public Text pickupName;
         public Image pickupImage;
-
+        public float pickupAlertDisappearTime = 1;
 
 
         private void Awake()
@@ -97,18 +97,25 @@ namespace SUR
             itemList.Add(itemName);
 
             TriggerPickupPopup(itemName, sprite);
+            StartCoroutine(PickUpPopupDisappear());
 
             ReCalculateList();
             CraftingSystem.Instance.RefreshNeededItems();
 
         }
 
-        void TriggerPickupPopup(string itemName, Sprite itemSprite)
+        public void TriggerPickupPopup(string itemName, Sprite itemSprite)
         {
             pickupAlert.SetActive(true);
 
             pickupName.text = itemName + " Added To Inventory";
             pickupImage.sprite = itemSprite;
+        }
+
+        public IEnumerator PickUpPopupDisappear()
+        {
+            yield return new WaitForSeconds(pickupAlertDisappearTime);
+            pickupAlert.SetActive(false);
         }
 
         
