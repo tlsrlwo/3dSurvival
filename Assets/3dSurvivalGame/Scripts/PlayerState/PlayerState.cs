@@ -25,7 +25,7 @@ namespace SUR
         public float currentHydrationPercent;
         public float maxHydrationPercent;
 
-
+        public bool isHydrationActive;
 
         public void Awake()
         {
@@ -43,8 +43,20 @@ namespace SUR
         void Start()
         {
             currentHealth = maxHealth;
-            currentCalories = maxCalories; 
+            currentCalories = maxCalories;
+            currentHydrationPercent = maxHydrationPercent;
 
+            StartCoroutine(DecreaseHydration());
+
+        }
+        public IEnumerator DecreaseHydration()
+        {
+            while (true)
+            {
+                currentHydrationPercent -= 1;
+                yield return new WaitForSeconds(10f); 
+            }
+            
         }
 
         // Update is called once per frame
@@ -62,5 +74,6 @@ namespace SUR
                 currentCalories -= 1;
             }
         }
+
     }
 }
