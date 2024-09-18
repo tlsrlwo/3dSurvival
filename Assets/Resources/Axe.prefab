@@ -11,8 +11,9 @@ GameObject:
   - component: {fileID: 8313577946366940579}
   - component: {fileID: 7736145651191158834}
   - component: {fileID: 5774977654086816830}
-  - component: {fileID: 4649805980958278349}
   - component: {fileID: 2301233987883933689}
+  - component: {fileID: 4649805980958278349}
+  - component: {fileID: -9087776603638171774}
   m_Layer: 5
   m_Name: Axe
   m_TagString: Untagged
@@ -77,18 +78,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &4649805980958278349
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4188365108930653932}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c87e677d344afa14e93bcb91ab9594e1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!225 &2301233987883933689
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -101,3 +90,35 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!114 &4649805980958278349
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4188365108930653932}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c87e677d344afa14e93bcb91ab9594e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &-9087776603638171774
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4188365108930653932}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6924f0e2cf9baa049a9f5e1e65c6e815, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isTrashable: 0
+  thisName: Axe
+  thisDescription: A sharp tool.
+  thisFunctionality: Used to chop down trees.
+  isConsumable: 0
+  healthEffect: 0
+  caloriesEffect: 0
+  hydrationEffect: 0

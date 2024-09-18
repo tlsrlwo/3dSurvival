@@ -29,10 +29,8 @@ namespace SUR
             //if there is not item already then set our item.
             if (!Item)
             {
-
                 DragDrop.itemBeingDragged.transform.SetParent(transform);
                 DragDrop.itemBeingDragged.transform.localPosition = new Vector2(0, 0);
-
             }
         }
     }
