@@ -88,5 +88,21 @@ namespace SUR
                 centerDotImage.gameObject.SetActive(true);
             }
         }
+
+        public void DisableSelection()
+        {
+            handIcon.enabled = false;
+            centerDotImage.enabled = false;
+            interaction_Info_UI.SetActive(false);
+
+            selectedObject = null;
+        }
+
+        public void EnableSelection()
+        {
+            handIcon.enabled = true;
+            centerDotImage.enabled = true;
+            interaction_Info_UI.SetActive(true);
+        }
     }
 }

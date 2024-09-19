@@ -100,6 +100,12 @@ namespace SUR
 
                 craftingScreenUI.SetActive(true);
                 Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+
+                // 에임, 손 등 이런거 안보이게 함
+                SelectionManager.Instance.DisableSelection();
+                SelectionManager.Instance.GetComponent<SelectionManager>().enabled = false;
+
                 isOpen = true;
 
             }
@@ -107,9 +113,13 @@ namespace SUR
             {
                 craftingScreenUI.SetActive(false);
                 toolScreenUI.SetActive(false);
-                if(!InventorySystem.Instance.isOpen)
+                if (!InventorySystem.Instance.isOpen)
                 {
-                Cursor.lockState = CursorLockMode.Locked;
+                    Cursor.lockState = CursorLockMode.Locked;
+                    Cursor.visible = false;
+
+                    SelectionManager.Instance.EnableSelection();
+                    SelectionManager.Instance.GetComponent<SelectionManager>().enabled = true;
                 }
                 isOpen = false;
             }
