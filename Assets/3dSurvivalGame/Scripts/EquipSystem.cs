@@ -52,19 +52,19 @@ namespace SUR
             {
                 SelectQuickSlot(3);
             }
-            else if (!Input.GetKeyDown(KeyCode.Alpha4))
+            else if (Input.GetKeyDown(KeyCode.Alpha4))
             {
                 SelectQuickSlot(4);
             }
-            else if (!Input.GetKeyDown(KeyCode.Alpha5))
+            else if (Input.GetKeyDown(KeyCode.Alpha5))
             {
                 SelectQuickSlot(5);
             }
-            else if (!Input.GetKeyDown(KeyCode.Alpha6))
+            else if (Input.GetKeyDown(KeyCode.Alpha6))
             {
                 SelectQuickSlot(6);
             }
-            else if (!Input.GetKeyDown(KeyCode.Alpha7))
+            else if (Input.GetKeyDown(KeyCode.Alpha7))
             {
                 SelectQuickSlot(7);
             }
