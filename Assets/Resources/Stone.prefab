@@ -122,3 +122,6 @@ MonoBehaviour:
   healthEffect: 0
   caloriesEffect: 20
   hydrationEffect: 20
+  isEquippable: 1
+  isInsideQuickSlot: 0
+  isSelected: 0

@@ -29,12 +29,33 @@ namespace SUR
         public float caloriesEffect;
         public float hydrationEffect;
 
+        // -- equipping -- 
+        public bool isEquippable;
+        private GameObject itemPendingEquipping;
+        public bool isInsideQuickSlot;  // it's inside the slot
+
+        public bool isSelected;     // it's the item that we selected(after we put it in the equipSlot)
+
         private void Start()
         {
             itemInfoUI = InventorySystem.Instance.ItemInfoUI;
             itemInfoUI_itemName = itemInfoUI.transform.Find("itemName").GetComponent<Text>();
             itemInfoUI_itemDescription = itemInfoUI.transform.Find("itemDescription").GetComponent <Text>();
             itemInfoUI_itemFunctionality = itemInfoUI.transform.Find("itemFunctionality").GetComponent<Text>();
+        }
+
+        private void Update()
+        {
+            // 아이템이 equipSlot 에서 선택되어있으면, 인벤토리로 옮기는 동작 불가능하게끔 
+            if (isSelected)
+            {
+                // 컴포넌트로 부착된 DragDrop 스크립트를 비활성화
+                gameObject.GetComponent<DragDrop>().enabled = false;
+            }
+            else
+            {
+                gameObject.GetComponent<DragDrop>().enabled = true;
+            }
         }
 
         public void OnPointerEnter(PointerEventData eventData)
@@ -61,7 +82,13 @@ namespace SUR
                     itemPendingConsumption = gameObject;  // 지금 선택된 아이템이 사용될 아이템임을 지정
                     consumingFunction(healthEffect, caloriesEffect, hydrationEffect);
                 }
+                if (isEquippable && isInsideQuickSlot == false && EquipSystem.Instance.CheckIfFull() == false)
+                {
+                    EquipSystem.Instance.AddToQuickSlots(gameObject);
+                    isInsideQuickSlot = true;
+                }
             }
+
         }
 
         public void OnPointerUp(PointerEventData eventData)  // 클릭 버튼 up 시 실행
