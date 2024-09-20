@@ -21,6 +21,10 @@ namespace SUR
         public int selectedNumber = -1;
         public GameObject selectedItem;
 
+        [Header("ToolHolder")]
+        public GameObject ToolHolder;
+        public GameObject selectedItemModel;
+
         private void Awake()
         {
             if(Instance != null && Instance != this)
@@ -87,6 +91,8 @@ namespace SUR
                     selectedItem = GetSelectedItem(number);
                     selectedItem.GetComponent<InventoryItem>().isSelected = true;
 
+                    SetEquippedModel(selectedItem);
+
                     // changing the colour
                     foreach (Transform child in numbersHolder.transform)
                     {
@@ -106,7 +112,16 @@ namespace SUR
                     if (selectedItem != null)  // something else is selected
                     {
                         selectedItem.gameObject.GetComponent<InventoryItem>().isSelected = false;
+                        selectedItem = null;
                     }
+
+                    if(selectedItemModel != null)
+                    {
+                        DestroyImmediate(selectedItemModel.gameObject);  // destroy 만 하면 inspector 에서 missing 으로 표시되기때문에
+                        selectedItemModel = null;                        // null 값으로 재설정
+                        Debug.Log("Currently Selected Model destroyed");
+                    }
+
                     // changing the colour
                     foreach (Transform child in numbersHolder.transform)
                     {
@@ -116,9 +131,27 @@ namespace SUR
             }
         }
 
+        private void SetEquippedModel(GameObject selectedItem)
+        {
+            // 이미 선택된 아이템이 있으면, 그 아이템을 지우고 현재 선택된 아이템을 생성
+            if (selectedItemModel != null)
+            {
+                DestroyImmediate(selectedItemModel.gameObject);
+                selectedItemModel = null;
+                Debug.Log("selected item deleted");
+            }
+
+            string selectedItemName = selectedItem.name.Replace("(Clone)", "");
+            selectedItemModel = Instantiate(Resources.Load<GameObject>(selectedItemName + "_Model"),
+                new Vector3(0.91f, -1.55f, 1.7f), Quaternion.Euler(-7.773f, -88.4f, 0));
+            selectedItemModel.transform.SetParent(ToolHolder.transform, false);
+            Debug.Log("item instantiated");
+        }
+
+
         GameObject GetSelectedItem(int slotNumber)
         {
-            return quickSlotsList[slotNumber - 1].transform.GetChild(0).gameObject; 
+            return quickSlotsList[slotNumber - 1].transform.GetChild(0).gameObject;            
         }
 
         bool checkIfSlotIsFull(int slotNumber)
