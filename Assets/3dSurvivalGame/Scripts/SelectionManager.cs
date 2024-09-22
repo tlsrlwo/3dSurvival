@@ -24,6 +24,9 @@ namespace SUR
 
         public bool handIsVisible;
 
+        public GameObject selectedTree;
+        public GameObject chopHolder;
+
 
         private void Awake()
         {
@@ -52,6 +55,26 @@ namespace SUR
                 var selectionTransform = hit.transform;
 
                 InteractableObjects Interactable = selectionTransform.GetComponent<InteractableObjects>();
+
+                ChoppableTree choppableTree = selectionTransform.GetComponent<ChoppableTree>();
+
+                if(choppableTree && choppableTree.playerInRange)   //if choppableTree is not null and playerInRange is true
+                {
+                    choppableTree.canBeChopped = true;
+                    selectedTree = choppableTree.gameObject;
+                    chopHolder.gameObject.SetActive(true);
+
+                }
+                else
+                {
+                    if (selectedTree != null)
+                    {
+                        selectedTree.gameObject.GetComponent<ChoppableTree>().canBeChopped = false;
+                        selectedTree = null;
+                        chopHolder.gameObject.SetActive (false);
+                    }
+                }
+
 
                 if (Interactable && Interactable.playerInRange) 
                 {

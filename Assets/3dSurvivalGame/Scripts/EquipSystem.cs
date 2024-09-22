@@ -76,7 +76,7 @@ namespace SUR
 
         void SelectQuickSlot(int number)
         {
-            if (checkIfSlotIsFull(number) == true)
+            if (checkIfSlotIsFull(number) == true) // 안에 물건이 있어야 선택할 수 있기 때문에 true
             {
                if(selectedNumber != number)  // 기존 선택된 번호가 아닐 시
                 {
@@ -117,8 +117,9 @@ namespace SUR
 
                     if(selectedItemModel != null)
                     {
-                        DestroyImmediate(selectedItemModel.gameObject);  // destroy 만 하면 inspector 에서 missing 으로 표시되기때문에
-                        selectedItemModel = null;                        // null 값으로 재설정
+                        DestroyImmediate(selectedItemModel.gameObject);   
+                        selectedItemModel = null; 
+                        // destroy 만 하면 selectedItemModel 값이 inspector 에서 missing 으로 표시되기때문에 null 값으로 재설정 해줌 
                         Debug.Log("Currently Selected Model destroyed");
                     }
 
