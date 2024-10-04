@@ -120,8 +120,8 @@ MonoBehaviour:
   thisFunctionality: Used for crafthing others.
   isConsumable: 0
   healthEffect: 0
-  caloriesEffect: 20
-  hydrationEffect: 20
+  caloriesEffect: 0
+  hydrationEffect: 0
   isEquippable: 0
   isInsideQuickSlot: 0
   isSelected: 0

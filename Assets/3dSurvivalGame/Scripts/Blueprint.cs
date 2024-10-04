@@ -16,11 +16,15 @@ namespace SUR
 
         public int numOfRequirements;
 
-        public Blueprint(string name, int reqNUM, string R1, int R1num, string R2, int R2num)
+        public int numOfItemsToProduce;
+
+        public Blueprint(string name, int producedItems, int reqNUM, string R1, int R1num, string R2, int R2num)
         {
             itemName = name;
 
             numOfRequirements = reqNUM;
+
+            numOfItemsToProduce = producedItems;
 
             Req1 = R1;
             Req2 = R2;
