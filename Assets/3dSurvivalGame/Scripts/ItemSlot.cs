@@ -30,6 +30,10 @@ namespace SUR
             //if there is not item already then set our item.
             if (!Item)
             {
+                // 사운드 재생
+                SoundManager.Instance.PlayDropsound();
+
+
                 DragDrop.itemBeingDragged.transform.SetParent(transform);
                 DragDrop.itemBeingDragged.transform.localPosition = new Vector2(0, 0);
 

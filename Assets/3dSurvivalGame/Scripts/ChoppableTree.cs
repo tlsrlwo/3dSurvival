@@ -29,7 +29,7 @@ namespace SUR
             {
                 GlobalState.Instance.resourceHealth = treeHealth;
                 GlobalState.Instance.resourceMaxHealth = treeMaxHealth;
-            }
+            }            
         }
 
 
@@ -72,6 +72,7 @@ namespace SUR
             SelectionManager.Instance.selectedTree = null;
             SelectionManager.Instance.chopHolder.gameObject.SetActive(false);
 
+            // 나무가 있던 자리에 목재 리소스 Instantiate
             GameObject brokenTree = Instantiate(Resources.Load<GameObject>("ChoppedTree"), 
                 new Vector3(treePosition.x, treePosition.y + 0.2f, treePosition.z), Quaternion.Euler(0,0,0));
         }
