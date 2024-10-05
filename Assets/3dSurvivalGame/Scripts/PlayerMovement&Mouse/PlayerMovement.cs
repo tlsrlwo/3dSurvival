@@ -21,9 +21,14 @@ namespace SUR
 
         bool isGrounded;
 
+        // 플레이어가 움직였는지 확인
+        private Vector3 lastPosition = new Vector3(0f, 0f, 0f);
+        private bool isMoving;
+
         private void Awake()
         {
-            controller = GetComponent<CharacterController>();
+            controller = GetComponent<CharacterController>();     
+            lastPosition = transform.position;
         }
         // Update is called once per frame
         void Update()
@@ -61,6 +66,19 @@ namespace SUR
             velocity.y += gravity * Time.deltaTime;
 
             controller.Move(velocity * Time.deltaTime);
+
+            // 점프했을 때는 소리가 안나오게
+            if(lastPosition != gameObject.transform.position && isGrounded == true)
+            {
+                isMoving = true;
+                SoundManager.Instance.PlaySound(SoundManager.Instance.grassWalkSound);
+            }
+            else
+            {
+                isMoving= false;
+                SoundManager.Instance.grassWalkSound.Stop();    //플레이어가 움직이지 않으면 소리 멈춤
+            }
+            lastPosition = gameObject.transform.position;       // 멈추면 그 위치를 새로운 lastPosition 으로 지정
         }
     }
 }

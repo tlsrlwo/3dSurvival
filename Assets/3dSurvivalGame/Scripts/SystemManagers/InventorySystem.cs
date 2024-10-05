@@ -102,6 +102,8 @@ namespace SUR
 
         public void AddToInventory(string itemName)
         {
+            SoundManager.Instance.PlaySound(SoundManager.Instance.pickUpItemSound);
+
             whatSlotToEquip = FindNextEmptySlot();
 
             itemToAdd = Instantiate(Resources.Load<GameObject>(itemName), whatSlotToEquip.transform.position, whatSlotToEquip.transform.rotation);

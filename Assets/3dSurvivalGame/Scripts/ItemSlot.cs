@@ -31,7 +31,8 @@ namespace SUR
             if (!Item)
             {
                 // 사운드 재생
-                SoundManager.Instance.PlayDropsound();
+                //SoundManager.Instance.PlayDropItemsound();
+                SoundManager.Instance.PlaySound(SoundManager.Instance.dropItemsound);
 
 
                 DragDrop.itemBeingDragged.transform.SetParent(transform);

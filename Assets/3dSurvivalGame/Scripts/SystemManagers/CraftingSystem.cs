@@ -102,11 +102,10 @@ namespace SUR
 
         void CraftAnyItem(Blueprint blueprintToCraft)
         {
-            // produce the amount of items according to the blueprint
-            for (var i = 0; i < blueprintToCraft.numOfItemsToProduce; i++)  // for문으로 필요한 제공갯수만큼 반복해서 생성. 예) log는 craft시 2개가 추가되므로 밑에 식을 2번 실행
-            {
-                InventorySystem.Instance.AddToInventory(blueprintToCraft.itemName);
-            }
+            SoundManager.Instance.PlaySound(SoundManager.Instance.craftingSound);
+
+            StartCoroutine(craftedDelayForsound(blueprintToCraft));
+        
 
             if (blueprintToCraft.numOfRequirements == 1)
             {
@@ -132,7 +131,20 @@ namespace SUR
             RefreshNeededItems();
         }
 
-        
+        // 크래프트 소리랑 인벤토리에 들어가는 소리를 맞추기 위해 딜레이를 줌. ( 영상 만든 사람이 그런데 나는 아니지만 그냥 따라함 )
+        private IEnumerator craftedDelayForsound(Blueprint blueprintToCraft)
+        {
+
+            yield return new WaitForSeconds(1f);
+
+            // produce the amount of items according to the blueprint
+            for (var i = 0; i < blueprintToCraft.numOfItemsToProduce; i++)  // for문으로 필요한 제공갯수만큼 반복해서 생성. 예) log는 craft시 2개가 추가되므로 밑에 식을 2번 실행
+            {
+                InventorySystem.Instance.AddToInventory(blueprintToCraft.itemName);
+            }
+        }
+
+
         void Update()
         {
             if (Input.GetKeyDown(KeyCode.C) && !isOpen)

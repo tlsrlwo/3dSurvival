@@ -22,8 +22,9 @@ namespace SUR
                 InventorySystem.Instance.isOpen == false &&
                 CraftingSystem.Instance.isOpen == false &&
                 SelectionManager.Instance.handIsVisible == false)
-            {               
+            {
                 animator.SetTrigger("Hit");
+                StartCoroutine(SwingSoundDelay());
             }
         }
 
@@ -33,8 +34,15 @@ namespace SUR
 
             if (selectedTree != null)
             {
+                SoundManager.Instance.PlaySound(SoundManager.Instance.chopSound);
                 selectedTree.GetComponent<ChoppableTree>().GetHit();
             }
+        }
+
+        private IEnumerator SwingSoundDelay()
+        {
+            yield return new WaitForSeconds(0.2f);
+            SoundManager.Instance.PlaySound(SoundManager.Instance.toolSwingSound);
         }
     }
 }
