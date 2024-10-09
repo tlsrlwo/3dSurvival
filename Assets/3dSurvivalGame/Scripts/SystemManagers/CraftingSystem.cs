@@ -8,24 +8,55 @@ namespace SUR
     public class CraftingSystem : MonoBehaviour
     {
         public GameObject craftingScreenUI;
-        public GameObject toolScreenUI, survivalScreenUI, refineScreenUI;
+        public GameObject toolScreenUI, survivalScreenUI, refineScreenUI, constructionScreenUI;
 
         public List<string> inventoryItemList = new List<string>();
 
-        // Category Button
-        Button toolsBTN, survivalBTN, refineBTN;
+        //--------------------------------------------------------------CategoryButton(CraftingUI)
+        #region ("CategoryButton(CraftingUI)")    
+        Button toolsBTN,
+            survivalBTN,
+            refineBTN,
+            constructionBTN;
 
-        // Craft Button
-        Button craftAxeBTN, craftPlankBTN;
 
-        // Requirement Text
-        Text AxeReq1, AxeReq2, PlankReq1;
+        #endregion
+
+        //--------------------------------------------------------------CraftButtons
+        #region ("CraftButtons")
+        Button craftAxeBTN,
+            craftPlankBTN,
+            craftFoundationBTN,
+            craftWallBTN;
+
+
+        #endregion
+
+        //--------------------------------------------------------------Requirement Texts
+        #region ("Requirement Texts")       
+        Text AxeReq1,
+            AxeReq2,
+            PlankReq1,
+            FoundationReq1,
+            WallReq1;
+
+
+        #endregion
+
+        //--------------------------------------------------------------BluePrints
+        #region ("Bluprint")       
+        public Blueprint AxeBLP = new Blueprint("Axe", 1, 2, "Stone", 3, "Stick", 3);
+        public Blueprint PlankBLP = new Blueprint("Plank", 2, 1, "Log", 1, "", 0);
+        public Blueprint FoundationBLP = new Blueprint("Foundation", 1, 1, "Plank", 4, "", 0);
+        public Blueprint WallBLP = new Blueprint("Wall", 1, 1, "Plank", 2, "", 0);
+
+
+        #endregion
+
+
 
         public bool isOpen;
 
-        // All Blueprint
-        public Blueprint AxeBLP = new Blueprint("Axe", 1, 2, "Stone", 3, "Stick", 3);
-        public Blueprint PlankBLP = new Blueprint("Plank", 2, 1, "Log", 1, "", 0);
 
         public static CraftingSystem Instance { get; set; }
 
@@ -41,7 +72,7 @@ namespace SUR
             }
         }
 
-        // Start is called before the first frame update
+        //--------------------------------------------------------------Start
         void Start()
         {
             isOpen = false;
@@ -58,27 +89,48 @@ namespace SUR
             refineBTN = craftingScreenUI.transform.Find("RefineButton").GetComponent<Button>();
             refineBTN.onClick.AddListener(delegate { OpenRefineCategory(); });
 
+            // 크래프팅 UI "Construction"버튼 reference
+            constructionBTN = craftingScreenUI.transform.Find("ConstructButton").GetComponent<Button>();
+            constructionBTN.onClick.AddListener(delegate { OpenConstructionCategory(); });
+
+
+
             // Axe 만들기
             AxeReq1 = toolScreenUI.transform.Find("Axe").transform.Find("req1").GetComponent<Text>();
             AxeReq2 = toolScreenUI.transform.Find("Axe").transform.Find("req2").GetComponent<Text>();
 
-            craftAxeBTN = toolScreenUI.transform.Find("Axe").transform.Find("Button").GetComponent <Button>();
+            craftAxeBTN = toolScreenUI.transform.Find("Axe").transform.Find("Button").GetComponent<Button>();
             craftAxeBTN.onClick.AddListener(delegate { CraftAnyItem(AxeBLP); });
 
             // Plank 만들기           
             PlankReq1 = refineScreenUI.transform.Find("Plank").transform.Find("req1").GetComponent<Text>();
-            
+
             craftPlankBTN = refineScreenUI.transform.Find("Plank").transform.Find("Button").GetComponent<Button>();
             craftPlankBTN.onClick.AddListener(delegate { CraftAnyItem(PlankBLP); });
+
+            // Foundation 만들기
+            FoundationReq1 = constructionScreenUI.transform.Find("Foundation").transform.Find("req1").GetComponent<Text>();
+
+            craftFoundationBTN = constructionScreenUI.transform.Find("Foundation").transform.Find("Button").GetComponent<Button>();
+            craftFoundationBTN.onClick.AddListener(delegate { CraftAnyItem(FoundationBLP); });
+
+            // Wall 만들기
+            WallReq1 = constructionScreenUI.transform.Find("Wall").transform.Find("req1").GetComponent<Text>();
+
+            craftWallBTN = constructionScreenUI.transform.Find("Wall").transform.Find("Button").GetComponent<Button>();
+            craftWallBTN.onClick.AddListener(delegate { CraftAnyItem(WallBLP); });
+
         }
 
-        // UI 여는 부분 (Tools, Survival, Refine)
+        // UI 여는 부분 (Tools, Survival, Refine) 예) void OpenToolsCategory
+        #region
         void OpenToolsCategory()
         {
             craftingScreenUI.SetActive(false);
             survivalScreenUI.SetActive(false);
             refineScreenUI.SetActive(false);
-            
+            constructionScreenUI.SetActive(false);
+
             toolScreenUI.SetActive(true);
         }
 
@@ -87,6 +139,7 @@ namespace SUR
             craftingScreenUI.SetActive(false);
             toolScreenUI.SetActive(false);
             refineScreenUI.SetActive(false);
+            constructionScreenUI.SetActive(false);
 
             survivalScreenUI.SetActive(true);
         }
@@ -96,9 +149,22 @@ namespace SUR
             craftingScreenUI.SetActive(false);
             toolScreenUI.SetActive(false);
             survivalScreenUI.SetActive(false);
+            constructionScreenUI.SetActive(false);
 
             refineScreenUI.SetActive(true);
         }
+
+        void OpenConstructionCategory()
+        {
+            craftingScreenUI.SetActive(false);
+            toolScreenUI.SetActive(false);
+            survivalScreenUI.SetActive(false);
+            refineScreenUI.SetActive(false);
+
+            constructionScreenUI.SetActive(true);
+        }
+
+        #endregion
 
         void CraftAnyItem(Blueprint blueprintToCraft)
         {
@@ -168,6 +234,7 @@ namespace SUR
                 toolScreenUI.SetActive(false);
                 survivalScreenUI.SetActive(false);
                 refineScreenUI.SetActive(false);
+                constructionScreenUI.SetActive(false);
                 if (!InventorySystem.Instance.isOpen)
                 {
                     Cursor.lockState = CursorLockMode.Locked;
@@ -185,6 +252,7 @@ namespace SUR
             int stone_count = 0;
             int stick_count = 0;
             int log_count = 0;
+            int plank_count = 0;
 
             inventoryItemList = InventorySystem.Instance.itemList;
 
@@ -201,6 +269,9 @@ namespace SUR
                         break;
                     case "Log":
                         log_count += 1;
+                        break;
+                    case "Plank":
+                        plank_count += 1;
                         break;
 
 
@@ -232,6 +303,32 @@ namespace SUR
             else
             {
                 craftPlankBTN.gameObject.SetActive(false);
+            }
+
+            // ---- Foundation ---- //
+            FoundationReq1.text = "4 Log [" + plank_count + "]";
+
+            // crafting button appear part
+            if (plank_count >= 4 && InventorySystem.Instance.CheckSlotsAvailable(1))
+            {
+                craftFoundationBTN.gameObject.SetActive(true);
+            }
+            else
+            {
+                craftFoundationBTN.gameObject.SetActive(false);
+            }
+
+            // ---- Wall ---- //
+            WallReq1.text = "2 Log [" + plank_count + "]";
+
+            // crafting button appear part
+            if (plank_count >= 2 && InventorySystem.Instance.CheckSlotsAvailable(1))
+            {
+                craftWallBTN.gameObject.SetActive(true);
+            }
+            else
+            {
+                craftWallBTN.gameObject.SetActive(false);
             }
         }
     }

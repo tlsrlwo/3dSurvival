@@ -36,6 +36,10 @@ namespace SUR
 
         public bool isSelected;     // it's the item that we selected(after we put it in the equipSlot)
 
+        // -- usable --
+        public bool isUsable;
+        public GameObject itemPendingToBeUsed;
+
         private void Start()
         {
             itemInfoUI = InventorySystem.Instance.ItemInfoUI;
@@ -87,8 +91,53 @@ namespace SUR
                     EquipSystem.Instance.AddToQuickSlots(gameObject);
                     isInsideQuickSlot = true;
                 }
+                if(isUsable)
+                {
+                    itemPendingToBeUsed = gameObject;
+
+                    UseItem();
+                }
+
             }
 
+        }
+
+        private void UseItem()
+        {
+            itemInfoUI.SetActive(false);
+
+            // 열려있는 모든 UI 닫기
+            InventorySystem.Instance.isOpen = false;
+            InventorySystem.Instance.inventoryScreenUI.SetActive(false);
+
+            CraftingSystem.Instance.isOpen = false;
+            CraftingSystem.Instance.craftingScreenUI.SetActive(false);
+            CraftingSystem.Instance.toolScreenUI.SetActive(false);
+            CraftingSystem.Instance.survivalScreenUI.SetActive(false);
+            CraftingSystem.Instance.refineScreenUI.SetActive(false);
+            CraftingSystem.Instance.constructionScreenUI.SetActive(false);
+
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+
+            SelectionManager.Instance.EnableSelection();
+            SelectionManager.Instance.enabled = true;
+
+            switch (gameObject.name)
+            {
+                case "Foundation(Clone)":
+                    ConstructionManager.Instance.ActivateConstructionPlacement("FoundationMode1");
+                    break;
+                case "Foundation":
+                    ConstructionManager.Instance.ActivateConstructionPlacement("FoundationMode1"); //for testing
+                    break;
+                /*case "Wall":
+                    ConstructionManager.Instance.ActivateConstructionPlacement("WallModel"); 
+                    break;*/
+                default:
+                    // do nothing
+                    break;
+            }
         }
 
         public void OnPointerUp(PointerEventData eventData)  // 클릭 버튼 up 시 실행
@@ -100,6 +149,12 @@ namespace SUR
                     DestroyImmediate(gameObject);  // 그냥 destroy 를 하면 다음 프레임에 바로 삭제됨, 그러면 RecalculateList와 RefreshNeededItems가 실행될 때 다른 상태일 수 있음
                     InventorySystem.Instance.ReCalculateList();
                     CraftingSystem.Instance.RefreshNeededItems();
+                }
+                if (isUsable && itemPendingToBeUsed == gameObject)
+                {
+                    DestroyImmediate(gameObject);                           //
+                    InventorySystem.Instance.ReCalculateList();             //
+                    CraftingSystem.Instance.RefreshNeededItems();           // 인벤토리 물건에 변화가 있으면 항상 이 코드 3줄을 사용하는듯
                 }
             }
         }
@@ -178,3 +233,4 @@ namespace SUR
         }
     }
 }
+
