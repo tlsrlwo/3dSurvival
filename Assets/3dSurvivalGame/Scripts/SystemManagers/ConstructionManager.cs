@@ -43,7 +43,7 @@ namespace SUR
         {
             GameObject item = Instantiate(Resources.Load<GameObject>(itemToConstruct));
 
-            //change the name of the gameobject so it will not be (clone)
+            //change the name of the gameobject so it will not be (clone) 아이템 뒤에 (클론) 을 제거하기 위해 item.name = itemToConstruct 로 바꿔줌
             item.name = itemToConstruct;
 
             item.transform.SetParent(constructionHoldingSpot.transform, false);
