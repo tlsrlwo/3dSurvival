@@ -37,8 +37,8 @@ namespace SUR
         public bool isSelected;     // it's the item that we selected(after we put it in the equipSlot)
 
         // -- usable --
-        public bool isUsable;
-        public GameObject itemPendingToBeUsed;
+        public bool isUseable;
+        //public GameObject itemPendingToBeUsed;
 
         private void Start()
         {
@@ -91,9 +91,11 @@ namespace SUR
                     EquipSystem.Instance.AddToQuickSlots(gameObject);
                     isInsideQuickSlot = true;
                 }
-                if(isUsable)
+                if(isUseable)
                 {
-                    itemPendingToBeUsed = gameObject;
+                    ConstructionManager.Instance.itemToBeDestroyed = gameObject;
+                    // 건설을 할 때(화면에 지을려고 나타날때) 인벤토리창에서 숨기는 역할인듯
+                    gameObject.SetActive(false);
 
                     UseItem();
                 }
@@ -126,10 +128,10 @@ namespace SUR
             switch (gameObject.name)
             {
                 case "Foundation(Clone)":
-                    ConstructionManager.Instance.ActivateConstructionPlacement("FoundationMode1");
+                    ConstructionManager.Instance.ActivateConstructionPlacement("FoundationModel");
                     break;
                 case "Foundation":
-                    ConstructionManager.Instance.ActivateConstructionPlacement("FoundationMode1"); //for testing
+                    ConstructionManager.Instance.ActivateConstructionPlacement("FoundationModel"); //for testing
                     break;
                 /*case "Wall":
                     ConstructionManager.Instance.ActivateConstructionPlacement("WallModel"); 
@@ -150,12 +152,12 @@ namespace SUR
                     InventorySystem.Instance.ReCalculateList();
                     CraftingSystem.Instance.RefreshNeededItems();
                 }
-                if (isUsable && itemPendingToBeUsed == gameObject)
+               /* if (isUsable && itemPendingToBeUsed == gameObject)
                 {
                     DestroyImmediate(gameObject);                           //
                     InventorySystem.Instance.ReCalculateList();             //
                     CraftingSystem.Instance.RefreshNeededItems();           // 인벤토리 물건에 변화가 있으면 항상 이 코드 3줄을 사용하는듯
-                }
+                }*/
             }
         }
 

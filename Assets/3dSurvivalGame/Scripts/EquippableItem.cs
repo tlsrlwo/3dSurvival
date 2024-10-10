@@ -21,7 +21,8 @@ namespace SUR
             if(Input.GetMouseButtonDown(0) && 
                 InventorySystem.Instance.isOpen == false &&
                 CraftingSystem.Instance.isOpen == false &&
-                SelectionManager.Instance.handIsVisible == false)
+                SelectionManager.Instance.handIsVisible == false &&
+                !ConstructionManager.Instance.inConstructionMode)
             {
                 animator.SetTrigger("Hit");
                 StartCoroutine(SwingSoundDelay());

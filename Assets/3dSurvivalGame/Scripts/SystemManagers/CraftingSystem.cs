@@ -213,7 +213,7 @@ namespace SUR
 
         void Update()
         {
-            if (Input.GetKeyDown(KeyCode.C) && !isOpen)
+            if (Input.GetKeyDown(KeyCode.C) && !isOpen && !ConstructionManager.Instance.inConstructionMode)
             {
                 Debug.Log("C is pressed");
 

@@ -21,6 +21,7 @@ namespace SUR
         public Material greenMaterial;
         public Material defaultMaterial;
 
+        // ghost 는 foundation  옆에 균일하게 설치 할 수 있게끔 도와주는 역할
         public List<GameObject> ghostList = new List<GameObject>();
 
         public BoxCollider solidCollider; // We need to drag this collider manualy into the inspector
@@ -30,7 +31,7 @@ namespace SUR
             mRenderer = GetComponent<Renderer>();
 
             mRenderer.material = defaultMaterial;
-            foreach (Transform child in transform)
+            foreach (Transform child in transform)      // ghost 를 list 에 추가
             {
                 ghostList.Add(child.gameObject);
             }
@@ -38,6 +39,7 @@ namespace SUR
         }
         void Update()
         {
+            // 바닥이랑 collide 하고 물체와 겹치지 않으면 건설 할 수 있는 상태(isValidToBeBuilt) 가 true
             if (isGrounded && isOverlappingItems == false)
             {
                 isValidToBeBuilt = true;
@@ -48,6 +50,9 @@ namespace SUR
             }
         }
 
+        //--------------------------------------------------------------ColliderTrigger
+        #region("ColliderTrigger")
+
         private void OnTriggerEnter(Collider other)
         {
             if (other.CompareTag("Ground") && gameObject.CompareTag("activeConstructable"))
@@ -55,9 +60,8 @@ namespace SUR
                 isGrounded = true;
             }
 
-            if (other.CompareTag("Tree") || other.CompareTag("pickable") && gameObject.CompareTag("activeConstructable"))
+            if (other.CompareTag("Tree") || other.CompareTag("Pickable") && gameObject.CompareTag("activeConstructable"))
             {
-
                 isOverlappingItems = true;
             }
 
@@ -74,7 +78,7 @@ namespace SUR
                 isGrounded = false;
             }
 
-            if (other.CompareTag("Tree") || other.CompareTag("pickable") && gameObject.CompareTag("activeConstructable"))
+            if (other.CompareTag("Tree") || other.CompareTag("Pickable") && gameObject.CompareTag("activeConstructable"))
             {
                 isOverlappingItems = false;
             }
@@ -84,6 +88,10 @@ namespace SUR
                 detectedGhostMemeber = false;
             }
         }
+
+
+        #endregion
+
 
         public void SetInvalidColor()
         {
@@ -103,12 +111,14 @@ namespace SUR
             mRenderer.material = defaultMaterial;
         }
 
+        // 건설한 오브젝트의 부모를 바꿔줌 자기 자신으로
         public void ExtractGhostMembers()
         {
             foreach (GameObject item in ghostList)
             {
                 item.transform.SetParent(transform.parent, true);
-                //  item.gameObject.GetComponent<GhostItem>().solidCollider.enabled = false;
+                // 건설을 하고 난 뒤 ghost의 콜라이더를 없앤다
+                item.gameObject.GetComponent<GhostItem>().solidCollider.enabled = false;
                 item.gameObject.GetComponent<GhostItem>().isPlaced = true;
             }
         }
