@@ -25,6 +25,11 @@ namespace SUR
 
         public GameObject itemToBeDestroyed;
 
+        public GameObject constructionUI;
+
+        public GameObject player;
+
+
 
         // 월드에 존재하는 모든 ghost 들을 추적하는 list생성
         // We keep a reference to all ghosts currently in our world,
@@ -150,20 +155,34 @@ namespace SUR
 
         private void Update()
         {
+            if(inConstructionMode)
+            {
+                constructionUI.SetActive(true);
+            }
+            else
+            {
+                constructionUI.SetActive(false);
+            }
+
+
+            
             // 색상 초록색 혹은 빨강색으로 확인
             if (itemToBeConstructed != null && inConstructionMode)
             {
-                if (CheckValidConstructionPosition())
+                // wall은 foundation 위에만 지을 수 있기 때문에 isValidePlacement 적용 안됨. 그러므로 FoundationModel만 적용되게끔 밑에 식을 if로 한 번 더 묶음
+                if (itemToBeConstructed.name == "FoundationModel")
                 {
-                    isValidPlacement = true;
-                    itemToBeConstructed.GetComponent<Constructable>().SetValidColor();
+                    if (CheckValidConstructionPosition())
+                    {
+                        isValidPlacement = true;
+                        itemToBeConstructed.GetComponent<Constructable>().SetValidColor();
+                    }
+                    else
+                    {
+                        isValidPlacement = false;
+                        itemToBeConstructed.GetComponent<Constructable>().SetInvalidColor();
+                    }
                 }
-                else
-                {
-                    isValidPlacement = false;
-                    itemToBeConstructed.GetComponent<Constructable>().SetInvalidColor();
-                }
-
 
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                 RaycastHit hit;
@@ -171,7 +190,14 @@ namespace SUR
                 {
                     var selectionTransform = hit.transform;
                     // ray가 맞은 위치값의 오브젝트의 tag 가 ghost 일 때
-                    if (selectionTransform.gameObject.CompareTag("ghost"))
+                    if (selectionTransform.gameObject.CompareTag("ghost") && itemToBeConstructed.name == "FoundationModel")
+                    {
+                        itemToBeConstructed.SetActive(false);
+                        selectingAGhost = true;
+                        // ray가 맞은 오브젝트를 seletedGhost로 지정
+                        selectedGhost = selectionTransform.gameObject;
+                    }
+                    else if (selectionTransform.gameObject.CompareTag("wallGhost") && itemToBeConstructed.name == "WallModel")
                     {
                         itemToBeConstructed.SetActive(false);
                         selectingAGhost = true;
@@ -192,7 +218,7 @@ namespace SUR
             if (Input.GetMouseButtonDown(0) && inConstructionMode)
             {
                 // ghost의 위치가 아닌 곳에 건설할 때 (자유건설)
-                if (isValidPlacement && selectedGhost == false) // We don't want the freestyle to be triggered when we select a ghost.
+                if (isValidPlacement && selectedGhost == false && itemToBeConstructed.name == "FoundationModel") // We don't want the freestyle to be triggered when we select a ghost.
                 {
                     PlaceItemFreeStyle();                       // 실제 모델
                     DestroyItem(itemToBeDestroyed);             // 인벤토리 내의 아이템
@@ -216,6 +242,7 @@ namespace SUR
                 DestroyItem(itemToBeConstructed);               // DestroyItem 을 먼저 해주고 null로 바꿔줘야됨. 순서가중요. null 로 먼저 바꾸면 destroyItem 이 작동 못함
                 itemToBeConstructed = null;
 
+                selectedGhost = null;
                 inConstructionMode = false;
             }
         }
@@ -223,7 +250,7 @@ namespace SUR
         private void PlaceItemInGhostPosition(GameObject copyOfGhost) //  매개변수 selectedGhost(오브젝트)
         {
 
-            Vector3 ghostPosition = copyOfGhost.transform.position;     
+            Vector3 ghostPosition = copyOfGhost.transform.position;
             Quaternion ghostRotation = copyOfGhost.transform.rotation;
 
             selectedGhost.gameObject.SetActive(false);
@@ -233,22 +260,33 @@ namespace SUR
             // 건설한 오브젝트의 부모를 스스로로 만들어줌(root of our scene)
             itemToBeConstructed.transform.SetParent(transform.parent.transform.parent, true);
 
-            // 오브젝트를 ghost의 위치로 지정해줌 
-            itemToBeConstructed.transform.position = ghostPosition;
-            itemToBeConstructed.transform.rotation = ghostRotation;
+            // 건설한 오브젝트끼리 위치가 겹치면 우선순위를 정하지 못해 반짝거리는 현상이 나타남. 이걸 해결하기 위해 만들어질 때 오차범위를 살짝씩 줘서 완전히 겹치지 않게 함
+            var randomOffset = UnityEngine.Random.Range(0.01f, 0.03f);
 
-            // Making the Ghost Children to no longer be children of this item
-            itemToBeConstructed.GetComponent<Constructable>().ExtractGhostMembers();
-            // Setting the default color/material
-            itemToBeConstructed.GetComponent<Constructable>().SetDefaultColor();
-            itemToBeConstructed.tag = "placedFoundation";
+            // 오브젝트를 ghost의 위치로 지정해줌 
+            itemToBeConstructed.transform.position = new Vector3(ghostPosition.x, ghostPosition.y, ghostPosition.z + randomOffset);
+            itemToBeConstructed.transform.rotation = ghostRotation;
 
             // 앞전에 비활성화 시킨 solid collider 컴포넌트를 재활성화
             itemToBeConstructed.GetComponent<Constructable>().solidCollider.enabled = true;
 
-            //Adding all the ghosts of this item into the manager's ghost bank
-            GetAllGhosts(itemToBeConstructed);
-            PerformGhostDeletionScan();
+            // Setting the default color/material
+            itemToBeConstructed.GetComponent<Constructable>().SetDefaultColor();
+
+            if (itemToBeConstructed.name == "FoundationModel")
+            {
+                // Making the Ghost Children to no longer be children of this item
+                itemToBeConstructed.GetComponent<Constructable>().ExtractGhostMembers();
+                itemToBeConstructed.tag = "placedFoundation";
+                //Adding all the ghosts of this item into the manager's ghost bank
+                GetAllGhosts(itemToBeConstructed);
+                PerformGhostDeletionScan();
+            }
+            else
+            {
+                itemToBeConstructed.tag = "placedWall";
+                DestroyItem(selectedGhost);                 // we delete this wallGhost, b/c the manager will not do it
+            }
 
             itemToBeConstructed = null;
 

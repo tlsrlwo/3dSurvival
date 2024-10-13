@@ -117,13 +117,12 @@ MonoBehaviour:
   isTrashable: 1
   thisName: Wall
   thisDescription: The most basic wall that might protect you from the wilds.
-  thisFunctionality: This item is buildable.
+  thisFunctionality: RIGHT CLICK to build.
   isConsumable: 0
   healthEffect: 0
   caloriesEffect: 0
   hydrationEffect: 0
-  isEquippable: 1
+  isEquippable: 0
   isInsideQuickSlot: 0
   isSelected: 0
-  isUsable: 1
-  itemPendingToBeUsed: {fileID: 0}
+  isUseable: 1

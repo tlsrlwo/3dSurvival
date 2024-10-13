@@ -133,9 +133,12 @@ namespace SUR
                 case "Foundation":
                     ConstructionManager.Instance.ActivateConstructionPlacement("FoundationModel"); //for testing
                     break;
-                /*case "Wall":
+                case "Wall(Clone)":
                     ConstructionManager.Instance.ActivateConstructionPlacement("WallModel"); 
-                    break;*/
+                    break;
+                case "Wall":
+                    ConstructionManager.Instance.ActivateConstructionPlacement("WallModel");
+                    break;
                 default:
                     // do nothing
                     break;
