@@ -1483,8 +1483,8 @@ MonoBehaviour:
   redMaterial: {fileID: 2100000, guid: 11b9a0b3175d4844a8666c8df6a7ccec, type: 2}
   greenMaterial: {fileID: 2100000, guid: 15bd73c7b9888a54f9715cb13130b09c, type: 2}
   defaultMaterial: {fileID: 2100000, guid: ae9078ecce7c70f46b362d18bf50809a, type: 2}
-  ghostList: []
   solidCollider: {fileID: 7772827518207137138}
+  ghostList: []
 --- !u!1 &6597073671599464914
 GameObject:
   m_ObjectHideFlags: 0

@@ -9,6 +9,8 @@ namespace SUR
 
     public class Constructable : MonoBehaviour
     {
+        //--------------------------------------------------------------References
+        #region("References")
         // Validation
         public bool isGrounded;
         public bool isOverlappingItems;
@@ -21,10 +23,13 @@ namespace SUR
         public Material greenMaterial;
         public Material defaultMaterial;
 
+        public BoxCollider solidCollider; // We need to drag this collider manualy into the inspector
+
+        #endregion
+
         // ghost 는 foundation  옆에 균일하게 설치 할 수 있게끔 도와주는 역할
         public List<GameObject> ghostList = new List<GameObject>();
 
-        public BoxCollider solidCollider; // We need to drag this collider manualy into the inspector
 
         private void Start()
         {

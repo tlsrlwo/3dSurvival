@@ -8,7 +8,9 @@ namespace SUR
     public class ConstructionManager : MonoBehaviour
     {
         public static ConstructionManager Instance { get; set; }
-                
+
+        //--------------------------------------------------------------References
+        #region("References")
         public GameObject itemToBeConstructed;      // Construct 하고 싶은 아이템
         public bool inConstructionMode = false;
         public GameObject constructionHoldingSpot;  // 플레이어에 있는 오브젝트
@@ -36,6 +38,8 @@ namespace SUR
         // so the manager can monitor them for various operations
         public List<GameObject> allGhostsInExistence = new List<GameObject>();
 
+        #endregion
+
         private void Awake()
         {
             if (Instance != null && Instance != this)
@@ -48,6 +52,7 @@ namespace SUR
             }
         }
 
+        // 인벤토리의 UseItem() 을 호출할 때 실행됨. Item을 우클릭해서 Construct 하기 위해 사용
         public void ActivateConstructionPlacement(string itemToConstruct)
         {
             GameObject item = Instantiate(Resources.Load<GameObject>(itemToConstruct));

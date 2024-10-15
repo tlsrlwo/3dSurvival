@@ -9,6 +9,8 @@ namespace SUR
 {
     public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler
     {
+        //--------------------------------------------------------------References
+        #region("References")
         // -- is this item trashable --
         public bool isTrashable;
 
@@ -39,6 +41,8 @@ namespace SUR
         // -- usable --
         public bool isUseable;
         //public GameObject itemPendingToBeUsed;
+
+        #endregion
 
         private void Start()
         {
@@ -102,6 +106,25 @@ namespace SUR
 
             }
 
+        }       
+
+        public void OnPointerUp(PointerEventData eventData)  // 클릭 버튼 up 시 실행
+        {
+            if (eventData.button == PointerEventData.InputButton.Right)
+            {
+                if (isConsumable && itemPendingConsumption == gameObject)  // onPointerDown 에서 돌았던 조건과 일치한다면
+                {
+                    DestroyImmediate(gameObject);  // 그냥 destroy 를 하면 다음 프레임에 바로 삭제됨, 그러면 RecalculateList와 RefreshNeededItems가 실행될 때 다른 상태일 수 있음
+                    InventorySystem.Instance.ReCalculateList();
+                    CraftingSystem.Instance.RefreshNeededItems();
+                }
+               /* if (isUsable && itemPendingToBeUsed == gameObject)
+                {
+                    DestroyImmediate(gameObject);                           //
+                    InventorySystem.Instance.ReCalculateList();             //
+                    CraftingSystem.Instance.RefreshNeededItems();           // 인벤토리 물건에 변화가 있으면 항상 이 코드 3줄을 사용하는듯
+                }*/
+            }
         }
 
         private void UseItem()
@@ -134,7 +157,7 @@ namespace SUR
                     ConstructionManager.Instance.ActivateConstructionPlacement("FoundationModel"); //for testing
                     break;
                 case "Wall(Clone)":
-                    ConstructionManager.Instance.ActivateConstructionPlacement("WallModel"); 
+                    ConstructionManager.Instance.ActivateConstructionPlacement("WallModel");
                     break;
                 case "Wall":
                     ConstructionManager.Instance.ActivateConstructionPlacement("WallModel");
@@ -142,25 +165,6 @@ namespace SUR
                 default:
                     // do nothing
                     break;
-            }
-        }
-
-        public void OnPointerUp(PointerEventData eventData)  // 클릭 버튼 up 시 실행
-        {
-            if (eventData.button == PointerEventData.InputButton.Right)
-            {
-                if (isConsumable && itemPendingConsumption == gameObject)  // onPointerDown 에서 돌았던 조건과 일치한다면
-                {
-                    DestroyImmediate(gameObject);  // 그냥 destroy 를 하면 다음 프레임에 바로 삭제됨, 그러면 RecalculateList와 RefreshNeededItems가 실행될 때 다른 상태일 수 있음
-                    InventorySystem.Instance.ReCalculateList();
-                    CraftingSystem.Instance.RefreshNeededItems();
-                }
-               /* if (isUsable && itemPendingToBeUsed == gameObject)
-                {
-                    DestroyImmediate(gameObject);                           //
-                    InventorySystem.Instance.ReCalculateList();             //
-                    CraftingSystem.Instance.RefreshNeededItems();           // 인벤토리 물건에 변화가 있으면 항상 이 코드 3줄을 사용하는듯
-                }*/
             }
         }
 

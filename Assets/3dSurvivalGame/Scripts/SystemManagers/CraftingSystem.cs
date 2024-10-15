@@ -44,7 +44,7 @@ namespace SUR
         #endregion
 
         //--------------------------------------------------------------BluePrints
-        #region ("Bluprint")       
+        #region ("Blueprint")       
         public Blueprint AxeBLP = new Blueprint("Axe", 1, 2, "Stone", 3, "Stick", 3);
         public Blueprint PlankBLP = new Blueprint("Plank", 2, 1, "Log", 1, "", 0);
         public Blueprint FoundationBLP = new Blueprint("Foundation", 1, 1, "Plank", 4, "", 0);

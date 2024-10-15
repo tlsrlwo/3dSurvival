@@ -7,6 +7,8 @@ namespace SUR
 {
     public class GhostItem : MonoBehaviour
     {
+        //--------------------------------------------------------------References
+        #region("References")
         public BoxCollider solidCollider; // set manually
 
         public Renderer mRenderer;
@@ -16,8 +18,11 @@ namespace SUR
 
         public bool isPlaced;
 
+        #endregion
+
         // A flag for the deletion algorithm
         public bool hasSamePosition = false;
+
         private void Start()
         {
             mRenderer = GetComponent<Renderer>();
