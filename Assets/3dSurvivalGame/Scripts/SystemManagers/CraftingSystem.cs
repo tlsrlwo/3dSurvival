@@ -182,6 +182,7 @@ namespace SUR
             {
                 InventorySystem.Instance.RemoveItem(blueprintToCraft.Req1, blueprintToCraft.Req1Amount);
                 InventorySystem.Instance.RemoveItem(blueprintToCraft.Req2, blueprintToCraft.Req2Amount);
+                
             }
 
             // refresh list
