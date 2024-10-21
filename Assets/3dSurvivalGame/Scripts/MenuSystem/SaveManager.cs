@@ -37,16 +37,19 @@ namespace SUR
         // Binary save path
         string binaryPath;
 
-
-
         // Json으로 저장할지 binary로 저장할지 인스펙터창에서 조절
         public bool isSavingToJson;
+                
+        string fileName = "SaveGame"; // binary이든 json 이드 공동으로 기본값으로 가져가는 저장이름
+
+
+
 
         private void Start()
         {
-            jsonPathProject = Application.dataPath + Path.AltDirectorySeparatorChar + "SaveGame.json";
-            jsonPathPersistant = Application.persistentDataPath + Path.AltDirectorySeparatorChar + "SaveGame.json";
-            binaryPath = Application.persistentDataPath + "/save_game.bin";     // 미리 start에 지정을 해놔서 코딩의 효율을 높임
+            jsonPathProject = Application.dataPath + Path.AltDirectorySeparatorChar;
+            jsonPathPersistant = Application.persistentDataPath + Path.AltDirectorySeparatorChar;
+            binaryPath = Application.persistentDataPath + Path.AltDirectorySeparatorChar;     // 미리 start에 지정을 해놔서 코딩의 효율을 높임
         }
 
 
@@ -54,13 +57,13 @@ namespace SUR
         //--------------------------------------------------------------Saving
         #region Saving
 
-        public void SaveGame()
+        public void SaveGame(int slotNumber)
         {
             AllGameData data = new AllGameData();
 
             data.playerData = GetPlayerData();
 
-            SavingTypeSwitch(data);
+            SavingTypeSwitch(data, slotNumber);
         }
 
         private PlayerData GetPlayerData()
@@ -84,16 +87,16 @@ namespace SUR
             return new PlayerData(playerStats, playerPosAndRot);
         }
 
-        public void SavingTypeSwitch(AllGameData gamedata)
+        public void SavingTypeSwitch(AllGameData gamedata, int slotNumber)
         {
             if (isSavingToJson)
             {
-                SaveGameDataToJsonFile(gamedata);
+                SaveGameDataToJsonFile(gamedata, slotNumber);
 
             }
             else
             {
-                SaveGameDataToBinaryFile(gamedata);
+                SaveGameDataToBinaryFile(gamedata, slotNumber);
             }
         }
         #endregion Saving
@@ -101,24 +104,24 @@ namespace SUR
         //--------------------------------------------------------------Loading
         #region Loading
 
-        public AllGameData LoadingTypeSwitch()
+        public AllGameData LoadingTypeSwitch(int slotNumber)
         {
             if (isSavingToJson)
             {
-                AllGameData gamedata = LoadGameDataFromJsonFile();    // change it to Json;
+                AllGameData gamedata = LoadGameDataFromJsonFile(slotNumber);    // change it to Json;
                 return gamedata;
             }
             else
             {
-                AllGameData gamedata = LoadGameDataFromBinaryFile();
+                AllGameData gamedata = LoadGameDataFromBinaryFile(slotNumber);
                 return gamedata;
             }
         }
 
-        public void LoadGame()
+        public void LoadGame(int slotNumber)
         {
             // PlayerData
-            SetPlayerData(LoadingTypeSwitch().playerData);
+            SetPlayerData(LoadingTypeSwitch(slotNumber).playerData);
 
             // EnvironmentData
 
@@ -150,19 +153,19 @@ namespace SUR
         }
 
 
-        public void LoadGameWhenGameStarts()
+        public void LoadGameWhenGameStarts(int slotNumber)
         {
             SceneManager.LoadScene("GameScene");
 
             // 게임 시작과 동시에 스크립트들과 정보가 준비되기까지 시간(아주약간)이 필요해서 coroutine을 걸어줌
-            StartCoroutine(DelayedLoading());
+            StartCoroutine(DelayedLoading(slotNumber));
         }
 
-        private IEnumerator DelayedLoading()
+        private IEnumerator DelayedLoading(int slotNumber)
         {
             yield return new WaitForSeconds(1f);
 
-            LoadGame();
+            LoadGame(slotNumber);
         }
 
 
@@ -206,33 +209,33 @@ namespace SUR
         //--------------------------------------------------------------Binary
         #region BinaryGameData
 
-        public void SaveGameDataToBinaryFile(AllGameData gamedata)
+        public void SaveGameDataToBinaryFile(AllGameData gamedata, int slotNumber)
         {
             BinaryFormatter formatter = new BinaryFormatter();
 
             //string path = Application.persistentDataPath + "/save_game.bin"; binaryPath
-            FileStream stream = new FileStream(binaryPath, FileMode.Create);
+            FileStream stream = new FileStream(binaryPath + fileName + slotNumber + ".bin", FileMode.Create);
 
             formatter.Serialize(stream, gamedata);
             stream.Close();
 
             //print("Data saved to" + Application.persistentDataPath + "/save_game.bin");  
-            print("Data saved to" + binaryPath);
+            print("Data saved to" + binaryPath + fileName + slotNumber + ".bin");
         }
 
-        public AllGameData LoadGameDataFromBinaryFile()
+        public AllGameData LoadGameDataFromBinaryFile(int slotNumber)
         {
             //string path = Application.persistentDataPath + "/save_game.bin";
-            if (File.Exists(binaryPath))
+            if (File.Exists(binaryPath + fileName + slotNumber + ".bin"))
             {
                 BinaryFormatter formatter = new BinaryFormatter();
-                FileStream stream = new FileStream(binaryPath, FileMode.Open);
+                FileStream stream = new FileStream(binaryPath + fileName + slotNumber + ".bin", FileMode.Open);
 
                 AllGameData data = formatter.Deserialize(stream) as AllGameData;
                 stream.Close();
 
                 //print("Data loaded from" + Application.persistentDataPath + "/save_game.bin");
-                print("Data loaded from" + binaryPath);
+                print("Data loaded from" + binaryPath + fileName + slotNumber + ".bin");
 
                 return data;
             }
@@ -247,7 +250,7 @@ namespace SUR
         //--------------------------------------------------------------Json
         #region JsonGameData
 
-        public void SaveGameDataToJsonFile(AllGameData gamedata)
+        public void SaveGameDataToJsonFile(AllGameData gamedata, int slotNumber)
         {
             // gamedata객체를 string형식의 json파일로 저장
             string json = JsonUtility.ToJson(gamedata);
@@ -255,17 +258,17 @@ namespace SUR
             string encrypted = EncryptionDecryption(json);
 
             // StreamWriter는 파일로 적는 방법 jsonPathProject의 위치로 
-            using (StreamWriter writer = new StreamWriter(jsonPathProject))
+            using (StreamWriter writer = new StreamWriter(jsonPathProject + fileName + slotNumber + ".json"))
             {
                 //writer.Write(json);
                 writer.Write(encrypted);
-                print("Saved game to json file at :" + jsonPathProject);
+                print("Saved game to json file at :" + jsonPathProject + fileName + slotNumber + ".json");
             };
         }
 
-        public AllGameData LoadGameDataFromJsonFile()
+        public AllGameData LoadGameDataFromJsonFile(int slotNumber)
         {
-            using (StreamReader reader = new StreamReader(jsonPathProject))
+            using (StreamReader reader = new StreamReader(jsonPathProject + fileName + slotNumber + ".json"))
             {
                 // jsonPathProject에서 파일을 읽고 string형태로 가져옴
                 string json = reader.ReadToEnd();
@@ -354,7 +357,57 @@ namespace SUR
 
 
         #endregion
+
+
+        //--------------------------------------------------------------Utility
+        #region Utility
+        public bool DoesFileExists(int slotNumber)
+        {
+            if(isSavingToJson)
+            {
+                //json 파일의 저장위치에 파일이 존재하는지
+                if(System.IO.File.Exists(jsonPathProject + fileName + slotNumber + ".json"))        // 위치 + savegame1.json
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                //binary 파일의 저장위치에 파일이 존재하는지
+                if (System.IO.File.Exists(binaryPath + fileName + slotNumber + ".bin"))             // 위치 + savegame1.bin
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+        public bool IsSlotEmpty(int slotNumber)
+        {
+            if (DoesFileExists(slotNumber))
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        public void DeselectButton()
+        {
+            GameObject myEventSystem = GameObject.Find("EventSystem");
+            myEventSystem.GetComponent<UnityEngine.EventSystems.EventSystem>().SetSelectedGameObject(null);
+
+        }
+
+        #endregion
+
     }
-
-
 }

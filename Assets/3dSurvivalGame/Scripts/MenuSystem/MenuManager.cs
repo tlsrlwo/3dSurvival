@@ -76,10 +76,10 @@ namespace SUR
         }
 
 
-        public void TempSaveGame()
-        {
-            SaveManager.Instance.SaveGame();
-        }
+        //public void TempSaveGame()
+        //{
+        //    SaveManager.Instance.SaveGame();
+        //}
 
 
 
