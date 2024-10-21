@@ -12,7 +12,8 @@ namespace SUR
 {
     public class SaveManager : MonoBehaviour
     {
-       public static SaveManager Instance { get; set; }
+        public static SaveManager Instance { get; set; }
+
         private void Awake()
         {
             if (Instance != null && Instance != this)
@@ -27,8 +28,28 @@ namespace SUR
             DontDestroyOnLoad(gameObject);
         }
 
+        // Json Project Save Path
+        string jsonPathProject;
+
+        // Json external/real save path (빌드를 하면 만들어지는 저장될 파일의 위치) (persistant = 지속성)
+        string jsonPathPersistant;
+
+        // Binary save path
+        string binaryPath;
+
+
+
         // Json으로 저장할지 binary로 저장할지 인스펙터창에서 조절
         public bool isSavingToJson;
+
+        private void Start()
+        {
+            jsonPathProject = Application.dataPath + Path.AltDirectorySeparatorChar + "SaveGame.json";
+            jsonPathPersistant = Application.persistentDataPath + Path.AltDirectorySeparatorChar + "SaveGame.json";
+            binaryPath = Application.persistentDataPath + "/save_game.bin";     // 미리 start에 지정을 해놔서 코딩의 효율을 높임
+        }
+
+
 
         //--------------------------------------------------------------Saving
         #region Saving
@@ -65,9 +86,9 @@ namespace SUR
 
         public void SavingTypeSwitch(AllGameData gamedata)
         {
-            if(isSavingToJson)
+            if (isSavingToJson)
             {
-                //SaveGameDataToJsonFile(gamedata);
+                SaveGameDataToJsonFile(gamedata);
 
             }
             else
@@ -77,7 +98,6 @@ namespace SUR
         }
         #endregion Saving
 
-
         //--------------------------------------------------------------Loading
         #region Loading
 
@@ -85,12 +105,12 @@ namespace SUR
         {
             if (isSavingToJson)
             {
-                AllGameData gamedata = LoadGameDataToBinaryFile();    // change it to Json;
+                AllGameData gamedata = LoadGameDataFromJsonFile();    // change it to Json;
                 return gamedata;
             }
             else
             {
-                AllGameData gamedata = LoadGameDataToBinaryFile();
+                AllGameData gamedata = LoadGameDataFromBinaryFile();
                 return gamedata;
             }
         }
@@ -101,7 +121,7 @@ namespace SUR
             SetPlayerData(LoadingTypeSwitch().playerData);
 
             // EnvironmentData
-           
+
 
         }
 
@@ -110,7 +130,7 @@ namespace SUR
             // Set Player State
             PlayerState.Instance.currentHealth = playerData.playerStats[0];
             PlayerState.Instance.currentCalories = playerData.playerStats[1];
-            PlayerState.Instance.currentHydrationPercent= playerData.playerStats[2];
+            PlayerState.Instance.currentHydrationPercent = playerData.playerStats[2];
 
             // Set Player Position
             Vector3 loadedPosition;
@@ -140,11 +160,9 @@ namespace SUR
 
         private IEnumerator DelayedLoading()
         {
-
-
             yield return new WaitForSeconds(1f);
 
-            LoadGame();            
+            LoadGame();
         }
 
 
@@ -192,35 +210,36 @@ namespace SUR
         {
             BinaryFormatter formatter = new BinaryFormatter();
 
-            string path = Application.persistentDataPath + "/save_game.bin";
-            FileStream stream = new FileStream(path, FileMode.Create);
+            //string path = Application.persistentDataPath + "/save_game.bin"; binaryPath
+            FileStream stream = new FileStream(binaryPath, FileMode.Create);
 
             formatter.Serialize(stream, gamedata);
             stream.Close();
 
-            print("Data saved to" + Application.persistentDataPath + "/save_game.bin");  
+            //print("Data saved to" + Application.persistentDataPath + "/save_game.bin");  
+            print("Data saved to" + binaryPath);
         }
 
-        public AllGameData LoadGameDataToBinaryFile()
+        public AllGameData LoadGameDataFromBinaryFile()
         {
-            string path = Application.persistentDataPath + "/save_game.bin";
-            if(File.Exists(path))
+            //string path = Application.persistentDataPath + "/save_game.bin";
+            if (File.Exists(binaryPath))
             {
                 BinaryFormatter formatter = new BinaryFormatter();
-                FileStream stream = new FileStream(path, FileMode.Open);
+                FileStream stream = new FileStream(binaryPath, FileMode.Open);
 
                 AllGameData data = formatter.Deserialize(stream) as AllGameData;
                 stream.Close();
 
-
-                print("Data loaded from" + Application.persistentDataPath + "/save_game.bin");
+                //print("Data loaded from" + Application.persistentDataPath + "/save_game.bin");
+                print("Data loaded from" + binaryPath);
 
                 return data;
             }
             else
             {
                 return null;
-            } 
+            }
         }
 
         #endregion BinaryGameData
@@ -230,17 +249,35 @@ namespace SUR
 
         public void SaveGameDataToJsonFile(AllGameData gamedata)
         {
+            // gamedata객체를 string형식의 json파일로 저장
+            string json = JsonUtility.ToJson(gamedata);
 
+            string encrypted = EncryptionDecryption(json);
 
-
+            // StreamWriter는 파일로 적는 방법 jsonPathProject의 위치로 
+            using (StreamWriter writer = new StreamWriter(jsonPathProject))
+            {
+                //writer.Write(json);
+                writer.Write(encrypted);
+                print("Saved game to json file at :" + jsonPathProject);
+            };
         }
 
-        public AllGameData LoadGameDataToJsonFile()
+        public AllGameData LoadGameDataFromJsonFile()
         {
+            using (StreamReader reader = new StreamReader(jsonPathProject))
+            {
+                // jsonPathProject에서 파일을 읽고 string형태로 가져옴
+                string json = reader.ReadToEnd();
 
+                string decrypted = EncryptionDecryption(json);
 
+                // string으로 가져온 파일을 오브젝트(AllGameData)로 변환해줌
+                AllGameData data = JsonUtility.FromJson<AllGameData>(decrypted);
+                print("Saved game loaded from json file at :" + jsonPathProject);
 
-            return null;
+                return data;
+            };
         }
 
         #endregion JsonGameData
@@ -280,7 +317,7 @@ namespace SUR
             //VolumeSettings settings = JsonUtility.FromJson<VolumeSettings>(PlayerPrefs.GetString("Volume"));
             //var settings = JsonUtility.FromJson<VolumeSettings>(PlayerPrefs.GetString("Volume"));
 
-            return JsonUtility.FromJson<VolumeSettings>(PlayerPrefs.GetString("Volume"));            
+            return JsonUtility.FromJson<VolumeSettings>(PlayerPrefs.GetString("Volume"));
         }
 
         /*public float LoadMusicVolume()
@@ -290,14 +327,34 @@ namespace SUR
 
         }*/
 
+        #endregion Volume부분
+
+
+        #endregion Settings
+
+        //--------------------------------------------------------------Encryption
+        #region Encryption
+
+        public string EncryptionDecryption(string jsonString)
+        {
+            // 비밀번호?
+            string keyword = "1234567";
+            string result = "";
+
+            //각 jsonString의 글자 하나하나에 루프를 걸어서 result 에 채워넣음. 현재 result 는 "" 이라 공백인데 그걸 jsonString의 글자로 채워넣는 과정 같음
+            for(int i = 0; i < jsonString.Length; i++)
+            {
+                result += (char)(jsonString[i] ^ keyword[i % keyword.Length]);
+            }
+            return result;
+        }
+
+
+
+
+
+        #endregion
     }
-    #endregion Volume부분
-
-
-    #endregion Settings
-
-
-
 
 
 }
