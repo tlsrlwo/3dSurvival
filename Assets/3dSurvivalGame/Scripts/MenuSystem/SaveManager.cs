@@ -39,6 +39,9 @@ namespace SUR
 
         // Json으로 저장할지 binary로 저장할지 인스펙터창에서 조절
         public bool isSavingToJson;
+
+        // Loading할 때 인벤토리에 아이템이 추가될 때 나는 사운드를 조정하기 위해
+        public bool isLoading;
                 
         string fileName = "SaveGame"; // binary이든 json 이드 공동으로 기본값으로 가져가는 저장이름
 
@@ -63,8 +66,11 @@ namespace SUR
 
             data.playerData = GetPlayerData();
 
+            data.environmentData = GetEnvironmentData();
+
             SavingTypeSwitch(data, slotNumber);
         }
+
 
         private PlayerData GetPlayerData()
         {
@@ -84,7 +90,39 @@ namespace SUR
             playerPosAndRot[4] = PlayerState.Instance.playerBody.transform.rotation.y;
             playerPosAndRot[5] = PlayerState.Instance.playerBody.transform.rotation.z;
 
-            return new PlayerData(playerStats, playerPosAndRot);
+            string[] inventory = InventorySystem.Instance.itemList.ToArray();       //List값으로 저장되있는걸 Array(배열)로 전환
+
+            string[] quickSlots = GetQuickSlotsContent();
+
+            return new PlayerData(playerStats, playerPosAndRot, inventory, quickSlots);
+        }
+
+        // Quick Slot 에서 아이템 데이터를 추출하는 함수
+        private string[] GetQuickSlotsContent()
+        {
+            List<string> temp = new List<string>();
+
+            foreach(GameObject slot in EquipSystem.Instance.quickSlotsList)
+            {
+                if(slot.transform.childCount != 0)
+                {
+                    string name = slot.transform.GetChild(0).name;
+                    string str2 = "(Clone)";
+                    string cleanName = name.Replace(str2, "");
+
+                    temp.Add(cleanName);
+                }
+            }
+
+            // temp라는 string으로 된 List를 만들어서 결과값을 배열에 추가
+            return temp.ToArray();
+        }
+
+        private EnvironmentData GetEnvironmentData()
+        {
+            List<string> itemPickedUp = InventorySystem.Instance.itemsPickedUp;
+
+            return new EnvironmentData(itemPickedUp);
         }
 
         public void SavingTypeSwitch(AllGameData gamedata, int slotNumber)
@@ -124,8 +162,9 @@ namespace SUR
             SetPlayerData(LoadingTypeSwitch(slotNumber).playerData);
 
             // EnvironmentData
+            SetEnvironmentData(LoadingTypeSwitch(slotNumber).environmentData);
 
-
+            isLoading = false;
         }
 
         private void SetPlayerData(PlayerData playerData)
@@ -150,11 +189,46 @@ namespace SUR
             loadedRotation.z = playerData.playerPosAndRotation[5];
 
             PlayerState.Instance.playerBody.transform.rotation = Quaternion.Euler(loadedRotation);
+
+            // Set the inventory content
+            foreach(string item in playerData.inventoryContent)
+            {
+                InventorySystem.Instance.AddToInventory(item);
+            }
+
+            // Set the QuickSlots content
+            foreach(string item in playerData.quickSlotsContent)
+            {
+                // find next free quick slot
+                GameObject availableSlot = EquipSystem.Instance.FindNextEmptySlot();
+
+                var itemToAdd = Instantiate(Resources.Load<GameObject>(item));
+
+                itemToAdd.transform.SetParent(availableSlot.transform, false);
+            }
+        }
+
+        private void SetEnvironmentData(EnvironmentData environmentData)
+        {
+            foreach(Transform itemType in EnvironmentManager.Instance.allItems.transform)
+            {
+                foreach(Transform item in itemType.transform)
+                {
+                    if(environmentData.pickedUpItems.Contains(item.name))
+                    {
+                        Destroy(item.gameObject);
+                    }
+                }    
+            }
+
+            InventorySystem.Instance.itemsPickedUp = environmentData.pickedUpItems; 
         }
 
 
         public void LoadGameWhenGameStarts(int slotNumber)
         {
+            isLoading = true;
+
             SceneManager.LoadScene("GameScene");
 
             // 게임 시작과 동시에 스크립트들과 정보가 준비되기까지 시간(아주약간)이 필요해서 coroutine을 걸어줌
@@ -255,13 +329,13 @@ namespace SUR
             // gamedata객체를 string형식의 json파일로 저장
             string json = JsonUtility.ToJson(gamedata);
 
-            string encrypted = EncryptionDecryption(json);
+            //string encrypted = EncryptionDecryption(json);
 
             // StreamWriter는 파일로 적는 방법 jsonPathProject의 위치로 
             using (StreamWriter writer = new StreamWriter(jsonPathProject + fileName + slotNumber + ".json"))
             {
-                //writer.Write(json);
-                writer.Write(encrypted);
+                writer.Write(json);
+                //writer.Write(encrypted);
                 print("Saved game to json file at :" + jsonPathProject + fileName + slotNumber + ".json");
             };
         }
@@ -273,10 +347,10 @@ namespace SUR
                 // jsonPathProject에서 파일을 읽고 string형태로 가져옴
                 string json = reader.ReadToEnd();
 
-                string decrypted = EncryptionDecryption(json);
+                //string decrypted = EncryptionDecryption(json);
 
                 // string으로 가져온 파일을 오브젝트(AllGameData)로 변환해줌
-                AllGameData data = JsonUtility.FromJson<AllGameData>(decrypted);
+                AllGameData data = JsonUtility.FromJson<AllGameData>(json);
                 print("Saved game loaded from json file at :" + jsonPathProject);
 
                 return data;

@@ -188,7 +188,7 @@ namespace SUR
             InventorySystem.Instance.ReCalculateList();
         }
 
-        private GameObject FindNextEmptySlot()
+        public GameObject FindNextEmptySlot()
         {
             foreach (GameObject slot in quickSlotsList)
             {

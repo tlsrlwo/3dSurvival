@@ -10,7 +10,7 @@ namespace SUR
         // 각각의 데이터들을 클래스로 따로 저장해줌. 
         public PlayerData playerData;
 
-        //public EnvironmentData environmentData;
+        public EnvironmentData environmentData;
         //public ConstructionData constructionData;
 
     }

@@ -21,6 +21,10 @@ namespace SUR
                 if (InventorySystem.Instance.CheckSlotsAvailable(1))            // 여유칸이 최소 1칸이상이면
                 {
                     InventorySystem.Instance.AddToInventory(ItemName);
+
+                    InventorySystem.Instance.itemsPickedUp.Add(gameObject.name);
+
+
                     Destroy(this.gameObject);
                 }
                 else

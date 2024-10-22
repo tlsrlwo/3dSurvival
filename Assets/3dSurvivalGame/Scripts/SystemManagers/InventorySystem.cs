@@ -33,6 +33,9 @@ namespace SUR
         public Image pickupImage;
         public float pickupAlertDisappearTime = 1;
 
+        // used in saveManager for pickedUpItems
+        public List<string> itemsPickedUp;
+
 
         private void Awake()
         {
@@ -102,7 +105,10 @@ namespace SUR
 
         public void AddToInventory(string itemName)
         {
-            SoundManager.Instance.PlaySound(SoundManager.Instance.pickUpItemSound);
+            if (SaveManager.Instance.isLoading == false)
+            {
+                SoundManager.Instance.PlaySound(SoundManager.Instance.pickUpItemSound);
+            }
 
             whatSlotToEquip = FindNextEmptySlot();
 
