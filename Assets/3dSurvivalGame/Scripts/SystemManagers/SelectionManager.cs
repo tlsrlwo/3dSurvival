@@ -58,7 +58,28 @@ namespace SUR
 
                 ChoppableTree choppableTree = selectionTransform.GetComponent<ChoppableTree>();
 
-                if(choppableTree && choppableTree.playerInRange)   //if choppableTree is not null and playerInRange is true
+                NPC npc = selectionTransform.GetComponent<NPC>();
+
+                if (npc && npc.playerInRange)
+                {
+                    interaction_text.text = "Talk";
+                    interaction_Info_UI.SetActive(true);
+
+                    // 마우스 좌클릭 시 npc와 대화 시작
+                    if (Input.GetMouseButtonDown(0) && npc.isTalkingWithPlayer == false)
+                    {
+                        npc.StartConversation();
+                    }
+
+                }
+                else
+                {
+                    interaction_text.text = "";
+                    interaction_Info_UI.SetActive(false);
+                }
+
+
+                if (choppableTree && choppableTree.playerInRange)   //if choppableTree is not null and playerInRange is true
                 {
                     choppableTree.canBeChopped = true;
                     selectedTree = choppableTree.gameObject;
@@ -103,7 +124,7 @@ namespace SUR
                 else // ray 가 사물에 부딪혔지만 InteractableObjects 가 없는 경우
                 {
                     onTarget= false;
-                    interaction_Info_UI.SetActive(false);
+                    //interaction_Info_UI.SetActive(false);
                     handIcon.gameObject.SetActive(false);
                     centerDotImage.gameObject.SetActive(true);
 
