@@ -46,6 +46,9 @@ namespace SUR
         string fileName = "SaveGame"; // binary이든 json 이드 공동으로 기본값으로 가져가는 저장이름
 
 
+        // Loading Screen UI
+        public Canvas loadingScreen;
+
 
 
         private void Start()
@@ -165,6 +168,8 @@ namespace SUR
             SetEnvironmentData(LoadingTypeSwitch(slotNumber).environmentData);
 
             isLoading = false;
+
+            DeactivateLoadingScreen();
         }
 
         private void SetPlayerData(PlayerData playerData)
@@ -172,7 +177,7 @@ namespace SUR
             // Set Player State
             PlayerState.Instance.currentHealth = playerData.playerStats[0];
             PlayerState.Instance.currentCalories = playerData.playerStats[1];
-            PlayerState.Instance.currentHydrationPercent = playerData.playerStats[2];
+            PlayerState.Instance.currentHydrationPercent = playerData.playerStats[2]; 
 
             // Set Player Position
             Vector3 loadedPosition;
@@ -227,6 +232,8 @@ namespace SUR
 
         public void LoadGameWhenGameStarts(int slotNumber)
         {
+            ActivateLoadingScreen();
+
             isLoading = true;
 
             SceneManager.LoadScene("GameScene");
@@ -426,9 +433,23 @@ namespace SUR
             return result;
         }
 
+        #endregion
 
+        //--------------------------------------------------------------LoadingScreen
+        #region LoadingScreen
+        public void ActivateLoadingScreen()
+        {
+            loadingScreen.gameObject.SetActive(true);
+            
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
 
+        }
 
+        public void DeactivateLoadingScreen()
+        {
+            loadingScreen.gameObject.SetActive(false);
+        }
 
         #endregion
 

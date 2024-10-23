@@ -9,7 +9,6 @@ namespace SUR
     {
         public List<string> pickedUpItems;
 
-
         public EnvironmentData(List<string> _pickedupItems)
         {
             pickedUpItems = _pickedupItems;
