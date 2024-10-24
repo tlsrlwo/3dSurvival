@@ -33,7 +33,10 @@ namespace SUR
         // Update is called once per frame
         void Update()
         {
-            Move();
+            if (DialogueSystem.Instance.dialogueUIActive == false)
+            {
+                Move();
+            }
         }
 
 

@@ -71,6 +71,12 @@ namespace SUR
                         npc.StartConversation();
                     }
 
+                    if(DialogueSystem.Instance.dialogueUIActive)
+                    {
+                        interaction_Info_UI.SetActive(false);
+                        centerDotImage.gameObject.SetActive(false);
+                    }    
+
                 }
                 else
                 {

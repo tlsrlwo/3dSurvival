@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c320b908f414387488464f9dced4e1c9, type: 3}
+  m_Name: FirstNPC_Quest1
+  m_EditorClassIdentifier: 
+  initialDialogue:
+  - Hey there, I didn't expect to see anyone nearby here. My name is Chan.
+  - 'I''m suppose to help my father get rabbit hides,
+
+    He is a famous leather
+    - in the nearby village.'
+  - He will never say this, but he always wanted to have a son. A son that would
+    help his "family business".
+  - I really want to prove that I can also help.
+  - 
+  acceptOption: 'Sure I can help. I can use some money. '
+  acceptAnswer: Great! If you can bring me more than 7 rabbit hides, that would be
+    more than enough.
+  declineOption: I'm sorry but I cant kill them.
+  declineAnswer: Oh well... okay. If you change your mind comeback!
+  comebackAfterDecline: So... did you change your mind??
+  comebackInProgress: You're doing great! But still not enough. Look closely in the
+    high grasses!
+  comebackCompleted: Thank you so much ! Here is your reward.
+  finalWords: I hope this will make my father proud.
+  coinReward: 25
+  rewardItem1: Stone
+  rewardItem2: Stone
+  firstRequirementItem: Stick
+  firstRequirementAmount: 3
+  secondRequirementItem: 
+  secondRequirementAmount: 0
