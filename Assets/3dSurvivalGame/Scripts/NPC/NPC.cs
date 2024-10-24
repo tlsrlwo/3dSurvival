@@ -25,7 +25,7 @@ namespace SUR
         // NPC quests related
         public List<Quest> quests;
         public Quest currentActiveQuest = null;
-        public int activeQuestsIndex = 0;
+        public int activeQuestsIndex = 0;                   // NPC 의 퀘스트 종류 수. 하나 완료하면 또 다른 퀘스트가 있을 경우들
         public bool firstTimeInteraction = true;
         public int currentDialogue;
 
@@ -50,7 +50,7 @@ namespace SUR
             
             LookAtPlayer();
 
-            // NPC 한테 한 종류 이상의 퀘스트가 있을 수도 있음
+            // 첫 만남
             if (firstTimeInteraction)
             {
                 firstTimeInteraction = false;
@@ -59,12 +59,79 @@ namespace SUR
                 currentDialogue = 0;
 
             }
-            else
+            else // 첫만남이 아닌경우
             {
+                // 거절 후 다시 왔을 경우
+                if (currentActiveQuest.declined)
+                {
+                    DialogueSystem.Instance.OpenDialogueUI();
 
+                    npcDialogueText.text = currentActiveQuest.info.comebackAfterDecline;
+
+                    AcceptOrDeclineBTN();
+                }
+
+                // 미션 요구사항이 충족되지 않은 상태에서 돌아왔을 경우
+                if (currentActiveQuest.accepted && currentActiveQuest.isCompleted == false)
+                {
+                    if (QuestRequirementsCompleted())
+                    {
+                        SubmitRequiredItems();
+
+                        DialogueSystem.Instance.OpenDialogueUI();
+
+                        npcDialogueText.text = currentActiveQuest.info.comebackCompleted;
+
+                        option1Text.text = "[Take Reward]";
+                        option1BTN.onClick.RemoveAllListeners();
+                        option1BTN.onClick.AddListener(() =>
+                        {
+                            ReceiveRewardAndCompleteQuest();
+                        });
+                    }
+                    else
+                    {
+                        DialogueSystem.Instance.OpenDialogueUI();
+
+                        npcDialogueText.text = currentActiveQuest.info.comebackInProgress;
+                        option1Text.text = "[Close]";
+                        option1BTN.onClick.RemoveAllListeners();
+                        option1BTN.onClick.AddListener(() =>
+                        {
+                            DialogueSystem.Instance.CloseDialogueUI();
+                            isTalkingWithPlayer = false;
+                        });
+                    }
+
+                    
+                }
+
+                // 퀘스트가 완료됐을 경우
+                if(currentActiveQuest.isCompleted == true)
+                {
+                    DialogueSystem.Instance.OpenDialogueUI();
+
+                    npcDialogueText.text = currentActiveQuest.info.finalWords;
+
+                    CloseBTNDialogueUI();
+                    //option1Text.text = "[Close]";
+                    //option1BTN.onClick.RemoveAllListeners();
+                    //option1BTN.onClick.AddListener(() =>
+                    //{
+                    //    DialogueSystem.Instance.CloseDialogueUI();
+                    //    isTalkingWithPlayer = false;
+                    //});
+                }
+
+                // 추가 퀘스트가 있을경우
+                if (currentActiveQuest.initialDialogueCompleted == false)
+                {
+                    StartQuestInitialDialogue();
+                }
             }           
         }
 
+ 
         private void StartQuestInitialDialogue()
         {
             DialogueSystem.Instance.OpenDialogueUI();
@@ -82,32 +149,17 @@ namespace SUR
 
         private void CheckIfDialogueDone()
         {
-            if (currentDialogue == currentActiveQuest.info.initialDialogue.Count - 1)            // 현재 대화가 대화내용(리스트)중에 마지막 -1 이라면
+            if (currentDialogue == currentActiveQuest.info.initialDialogue.Count -1)            // 현재 대화가 대화내용(리스트)중에 마지막 -1 이라면
             {
                 npcDialogueText.text = currentActiveQuest.info.initialDialogue[currentDialogue];    // 현재 대화내용을 마지막으로 해줌
                 currentActiveQuest.initialDialogueCompleted = true;
 
-                // 옵션 1
-                option1Text.text = currentActiveQuest.info.acceptOption;                        // 버튼1 의 내용을 퀘스트수락 내용으로 변경
-                option1BTN.onClick.RemoveAllListeners();                                        // 기존 버튼 기능 삭제
-                option1BTN.onClick.AddListener(() =>                                           // 새 버튼 기능 
-                {
-                    AcceptedQuest();
-                });
-
-                // 옵션 2
-                option2BTN.gameObject.SetActive(true);                                          // 대화가 끝나면 선택지 제공을 위해 옵션2버튼 active
-                option2Text.text = currentActiveQuest.info.declineOption;                       // 버튼2 내용 퀘스트 거부
-                option2BTN.onClick.RemoveAllListeners();
-                option2BTN.onClick.AddListener(() =>
-                {
-                    DeclinedQuest();
-                });
+                AcceptOrDeclineBTN();                
             }
             else        // 아직 대화가 안끝났다면 
             {
                 npcDialogueText.text = currentActiveQuest.info.initialDialogue[currentDialogue];
-
+                
                 option1Text.text = "Next";
                 option1BTN.onClick.RemoveAllListeners();
                 option1BTN.onClick.AddListener(() =>
@@ -118,12 +170,174 @@ namespace SUR
             }
         }
 
-        private void AcceptedQuest() { print("quest accepted"); }
+        private void AcceptedQuest() 
+        {
+            currentActiveQuest.accepted = true;
+            currentActiveQuest.declined = false;
 
-        private void DeclinedQuest() { print("quest declined"); }
+            // requirements가 없음 -> 성공함 -> 리워드
+            if(currentActiveQuest.hasNoRequirements)
+            {
+                npcDialogueText.text = currentActiveQuest.info.comebackCompleted;
+                option1Text.text = "[Take Reward]";
+                option1BTN.onClick.RemoveAllListeners();
+                option1BTN.onClick.AddListener(() =>
+                {
+                    ReceiveRewardAndCompleteQuest();
+                });
+                option2BTN.gameObject.SetActive(false);
+            }
+            else // 
+            {
+                npcDialogueText.text = currentActiveQuest.info.acceptAnswer;
+
+                CloseBTNDialogueUI();
+            }
+
+            print("quest accepted"); 
+        }
+
+        private void DeclinedQuest()
+        {
+            currentActiveQuest.declined = true;
+
+            npcDialogueText.text = currentActiveQuest.info.declineAnswer;
+
+            CloseBTNDialogueUI();            
+
+            print("quest declined");
+        }
+
+        // 퀘스트에 사용된 아이템 인벤토리에서 제거
+        private void SubmitRequiredItems()
+        {
+            string firstRequiredItem = currentActiveQuest.info.firstRequirementItem;
+            int firstRequiredItemAmount = currentActiveQuest.info.firstRequirementAmount;
+
+            if (firstRequiredItem != "")
+            {
+                InventorySystem.Instance.RemoveItem(firstRequiredItem, firstRequiredItemAmount);        
+            }
+
+            string secondRequiredItem = currentActiveQuest.info.secondRequirementItem;
+            int secondRequiredItemAmount = currentActiveQuest.info.secondRequirementAmount;
+
+            if (secondRequiredItem != "")
+            {
+                InventorySystem.Instance.RemoveItem(secondRequiredItem, secondRequiredItemAmount);
+            }
+        }
 
 
 
+        private bool QuestRequirementsCompleted()
+        {
+            print("checking requirements");
+
+            // 첫번째 조건
+            string firstRequiredItem = currentActiveQuest.info.firstRequirementItem;
+            int firstRequiredAmount = currentActiveQuest.info.firstRequirementAmount;
+
+            var firstItemCounter = 0;
+
+            foreach (string item in InventorySystem.Instance.itemList)
+            {
+                if (item == firstRequiredItem)
+                {
+                    firstItemCounter++;
+                }
+            }
+
+            // 두번째 조건(있으면)
+            string secondRequiredItem = currentActiveQuest.info.firstRequirementItem;
+            int secondRequiredAmount = currentActiveQuest.info.firstRequirementAmount;
+
+            var secondItemCounter = 0;
+
+            foreach (string item in InventorySystem.Instance.itemList)
+            {
+                if (item == secondRequiredItem)
+                {
+                    secondItemCounter++;
+                }
+            }
+
+            if (firstItemCounter >= firstRequiredAmount && secondItemCounter >= secondRequiredAmount)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private void ReceiveRewardAndCompleteQuest()
+        {
+            currentActiveQuest.isCompleted = true;
+
+            var coinsReceived = currentActiveQuest.info.coinReward;     // 코인 보상. (숫자값)
+            print("You received" + coinsReceived + "gold coins.");
+
+            if(currentActiveQuest.info.rewardItem1 != "")               // 보상(reward item) 칸에 적혀있는게 있다면
+            {
+                // string 값을 전달받아서 해당 아이템을 보상으로 지급
+                InventorySystem.Instance.AddToInventory(currentActiveQuest.info.rewardItem1);       
+            }
+
+            if (currentActiveQuest.info.rewardItem2 != "")               
+            {                
+                InventorySystem.Instance.AddToInventory(currentActiveQuest.info.rewardItem2);
+            }
+                        
+            activeQuestsIndex++;                                        // 퀘스트가 여러개 있는 NPC이면 퀘스트Index 증가
+
+            if(activeQuestsIndex < quests.Count)                        // 퀘스트가 남아있다면 (퀘스트가 여러개면 activeQuestsIndex++ 를 해도 퀘스트가 남아있다는 뜻)
+            {
+                currentActiveQuest = quests[activeQuestsIndex];         // 현재 퀘스트를 n번째 퀘스트로 설정
+                currentDialogue = 0;                                    // 대화 정보값을 0번째로 다시 설정
+                DialogueSystem.Instance.CloseDialogueUI();
+                isTalkingWithPlayer = false;
+            }
+            else
+            {
+                DialogueSystem.Instance.CloseDialogueUI();
+                isTalkingWithPlayer = false;
+                print("no more quests");
+            }
+        }
+
+        private void AcceptOrDeclineBTN()
+        {
+            // 수락
+            option1Text.text = currentActiveQuest.info.acceptOption;
+            option1BTN.onClick.RemoveAllListeners();
+            option1BTN.onClick.AddListener(() =>
+            {
+                AcceptedQuest();
+            });
+
+            // 거절
+            option2BTN.gameObject.SetActive(true);
+            option2Text.text = currentActiveQuest.info.declineOption;
+            option2BTN.onClick.RemoveAllListeners();
+            option2BTN.onClick.AddListener(() =>
+            {
+                DeclinedQuest();
+            });
+        }
+
+        private void CloseBTNDialogueUI()
+        {
+            option1Text.text = "[Close]";
+            option1BTN.onClick.RemoveAllListeners();
+            option1BTN.onClick.AddListener(() =>
+            {
+                DialogueSystem.Instance.CloseDialogueUI();
+                isTalkingWithPlayer = false;
+            });
+            option2BTN.gameObject.SetActive(false);
+        }
 
         public void LookAtPlayer()
         {
