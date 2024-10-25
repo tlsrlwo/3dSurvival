@@ -19,7 +19,11 @@ namespace SUR
 
         void Update()
         {
-            if (!InventorySystem.Instance.isOpen && !CraftingSystem.Instance.isOpen && !MenuManager.Instance.isMenuOpen && !DialogueSystem.Instance.dialogueUIActive)
+            if (!InventorySystem.Instance.isOpen &&
+                !CraftingSystem.Instance.isOpen &&
+                !MenuManager.Instance.isMenuOpen &&
+                !DialogueSystem.Instance.dialogueUIActive
+                && !QuestManager.Instance.isQuestMenuOpen)
             {
                 float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
                 float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;

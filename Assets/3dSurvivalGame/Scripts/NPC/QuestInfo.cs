@@ -31,7 +31,7 @@ namespace SUR
         [TextArea(5, 10)]
         public string comebackInProgress;       // 요구사항을 다 채우지 못한 상태로 돌아온 경우
         [TextArea(5, 10)]
-        public string comebackCompleted;        // 
+        public string comebackCompleted;        // 미션을 완료 했을 때
 
         [TextArea(5, 10)]
         public string finalWords;

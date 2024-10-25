@@ -71,9 +71,10 @@ namespace SUR
                     AcceptOrDeclineBTN();
                 }
 
-                // 미션 요구사항이 충족되지 않은 상태에서 돌아왔을 경우
+                // 미션을 수락했고, 아직 완료되지 않은 상태 -> 요구사항 충족상태 확인해주는 내용
                 if (currentActiveQuest.accepted && currentActiveQuest.isCompleted == false)
                 {
+                    // 요구사항 충족
                     if (QuestRequirementsCompleted())
                     {
                         SubmitRequiredItems();
@@ -89,18 +90,20 @@ namespace SUR
                             ReceiveRewardAndCompleteQuest();
                         });
                     }
-                    else
+                    else // 미션 요구사항이 충족되지 않은 상태에서 돌아왔을 경우
                     {
                         DialogueSystem.Instance.OpenDialogueUI();
 
                         npcDialogueText.text = currentActiveQuest.info.comebackInProgress;
-                        option1Text.text = "[Close]";
+                        CloseBTNDialogueUI();
+                        
+                        /* option1Text.text = "[Close]";
                         option1BTN.onClick.RemoveAllListeners();
                         option1BTN.onClick.AddListener(() =>
                         {
                             DialogueSystem.Instance.CloseDialogueUI();
                             isTalkingWithPlayer = false;
-                        });
+                        });*/
                     }
 
                     
@@ -149,9 +152,9 @@ namespace SUR
 
         private void CheckIfDialogueDone()
         {
-            if (currentDialogue == currentActiveQuest.info.initialDialogue.Count -1)            // 현재 대화가 대화내용(리스트)중에 마지막 -1 이라면
+            if (currentDialogue == currentActiveQuest.info.initialDialogue.Count -1)            // 현재 대화가 대화내중에 마지막 (대화내용리스트.카운트의 -1) 이라면
             {
-                npcDialogueText.text = currentActiveQuest.info.initialDialogue[currentDialogue];    // 현재 대화내용을 마지막으로 해줌
+                npcDialogueText.text = currentActiveQuest.info.initialDialogue[currentDialogue];    // 
                 currentActiveQuest.initialDialogueCompleted = true;
 
                 AcceptOrDeclineBTN();                
@@ -172,6 +175,9 @@ namespace SUR
 
         private void AcceptedQuest() 
         {
+            // 퀘스트를 수락하면 questManager에 추가됨
+            QuestManager.Instance.AddActiveQuest(currentActiveQuest);
+
             currentActiveQuest.accepted = true;
             currentActiveQuest.declined = false;
 
@@ -274,6 +280,9 @@ namespace SUR
 
         private void ReceiveRewardAndCompleteQuest()
         {
+            // 퀘스트 완료하면 questManager 퀘스트 완료 List 에 추가
+            QuestManager.Instance.MarkQuestCompleted(currentActiveQuest);
+
             currentActiveQuest.isCompleted = true;
 
             var coinsReceived = currentActiveQuest.info.coinReward;     // 코인 보상. (숫자값)

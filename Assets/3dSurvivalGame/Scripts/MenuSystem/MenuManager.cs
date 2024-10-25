@@ -19,6 +19,13 @@ namespace SUR
 
         public bool isMenuOpen;
 
+       /* public int currentFrontUI = 0;
+        public int setAsFrontUI()
+        {
+       //캔버스 UI 들이 겹치는 현상을 열 때 마다 canvas의 sortingLayer를 증가시켜줌으로써 해결하는 방법. 다른 Manager들의 스크립트에서 증가시키는 코드 추가시켜야됨.
+            return currentFrontUI++;
+        }*/
+
         #endregion
 
         private void Awake()
