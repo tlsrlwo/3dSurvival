@@ -9,7 +9,7 @@ namespace SUR
     {
         public string questName;
         public string questGiver;
-
+        public string questDescription;
 
 
         [Header("Bools")]

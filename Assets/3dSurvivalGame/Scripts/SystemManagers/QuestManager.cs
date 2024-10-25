@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
 
@@ -23,6 +24,12 @@ namespace SUR
 
         [Header("QuestTracker")]
         public GameObject questTrackerContent;
+        public GameObject trackerRowPrefab;
+
+        public List<Quest> allTrackedQuests;
+
+  
+
 
         private void Awake()
         {
@@ -36,6 +43,7 @@ namespace SUR
             }
         }
 
+        // Q 버튼 눌러서 UI 열기닫기
         private void Update()
         {
             if (Input.GetKeyDown(KeyCode.Q) && !isQuestMenuOpen && !ConstructionManager.Instance.inConstructionMode)
@@ -68,11 +76,12 @@ namespace SUR
         }
 
 
-
+        #region QuestUI
         // 매개변수로 quest를 받아서 questList에 추가해줌. NPC스크립트에서 참조됨(퀘스트를 수락하는 부분)
         public void AddActiveQuest(Quest quest)
         {
             allActiveQuests.Add(quest);
+            TrackQuest(quest);
             RefreshQuestList();
         }
 
@@ -84,6 +93,8 @@ namespace SUR
 
             // completed list 에 추가
             allCompletedQuests.Add(quest);
+
+            UnTrackQuest(quest);
 
             RefreshQuestList();
         }
@@ -106,6 +117,8 @@ namespace SUR
 
                 // quesPrefab의 QuestRow 스크립트에 접근
                 QuestRow qRow = questPrefab.GetComponent<QuestRow>();
+
+                qRow.thisQuest = activeQuest;
 
                 qRow.questName.text = activeQuest.questName;
                 qRow.questGiver.text = activeQuest.questGiver;               
@@ -150,5 +163,75 @@ namespace SUR
 
             }
         }
+
+        #endregion
+
+
+        #region QuestTrackerUI
+        public void TrackQuest(Quest quest)
+        {
+            allTrackedQuests.Add(quest);
+            RefreshTrackerList();
+        }
+
+        public void UnTrackQuest(Quest quest)
+        {
+            allTrackedQuests.Remove(quest);
+            RefreshTrackerList();
+        }
+
+        public void RefreshTrackerList()
+        {
+            // 기존 리스트 제거. 중첩 막기위해
+            foreach (Transform child in questTrackerContent.transform)
+            {
+                Destroy(child.gameObject);
+            }
+
+            foreach(Quest trackedQuest in allTrackedQuests)
+            {
+                GameObject trackerPrefab = Instantiate(trackerRowPrefab, Vector3.zero, Quaternion.identity);
+                trackerPrefab.transform.SetParent(questTrackerContent.transform, false);
+
+                TrackerRow tRow = trackerPrefab.GetComponent<TrackerRow>();
+
+                tRow.questName.text = trackedQuest.questName;
+                tRow.description.text = trackedQuest.questDescription;
+
+                var req1 = trackedQuest.info.firstRequirementItem;                  // string
+                var req1Amount = trackedQuest.info.firstRequirementAmount;          // int
+                var req2 = trackedQuest.info.secondRequirementItem;                 // string
+                var req2Amount = trackedQuest.info.secondRequirementAmount;         // int
+
+                if (req2 != "")   // 요구조건이 2개
+                {
+                    tRow.requirements.text =
+                        $"{req1}" + InventorySystem.Instance.CheckItemAmount(req1) + "/" + $"{req1Amount}\n" +
+                        $"{req2}" + InventorySystem.Instance.CheckItemAmount(req2) + "/" + $"{req2Amount}\n";
+                }
+                else              // 요구조건이 1개
+                {
+                    tRow.requirements.text =
+                        $"{req1}" + InventorySystem.Instance.CheckItemAmount(req1) + "/" + $"{req1Amount}\n";
+                }
+
+
+               /* if (trackedQuest.info.secondRequirementItem != "") //요구조건이 2개면
+                {
+                    tRow.requirements.text = 
+                        $"{trackedQuest.info.firstRequirementItem}" + InventorySystem.Instance.CheckItemAmount(trackedQuest.info.firstRequirementItem) + "0/" + $"{trackedQuest.info.firstRequirementAmount}\n" +
+                        $"{trackedQuest.info.secondRequirementItem}" + InventorySystem.Instance.CheckItemAmount(trackedQuest.info.secondRequirementItem) + "/" + $"{trackedQuest.info.secondRequirementAmount}\n";
+                }
+                else
+                {
+                    tRow.requirements.text = $"{trackedQuest.info.firstRequirementItem}" + InventorySystem.Instance.CheckItemAmount(trackedQuest.info.firstRequirementItem) + "/" + $"{trackedQuest.info.firstRequirementAmount}\n";
+                                                        
+                }*/
+            }
+        }
+
+
+        #endregion
+
     }
 }

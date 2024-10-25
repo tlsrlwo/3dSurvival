@@ -124,6 +124,8 @@ namespace SUR
             ReCalculateList();
             CraftingSystem.Instance.RefreshNeededItems();
 
+            QuestManager.Instance.RefreshTrackerList();
+
         }
 
         public void TriggerPickupPopup(string itemName, Sprite itemSprite)
@@ -197,6 +199,8 @@ namespace SUR
             }
             ReCalculateList();
             CraftingSystem.Instance.RefreshNeededItems();
+
+            QuestManager.Instance.RefreshTrackerList();
         }
 
         public void ReCalculateList()
@@ -216,5 +220,22 @@ namespace SUR
                 }
             }
         }
+
+        // QeustManager TrackerUI ¿¡¼­ »ç¿ëµÊ
+        public int CheckItemAmount(string name)
+        {
+            int itemCounter = 0;
+
+            foreach(string item in itemList)
+            {
+                if(item == name)
+                {
+                    itemCounter++;
+                }
+            }
+            return itemCounter;
+        }
+
+
     }
 }

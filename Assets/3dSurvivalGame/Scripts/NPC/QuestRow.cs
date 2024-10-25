@@ -24,5 +24,31 @@ namespace SUR
         public Image secondReward;
         public TextMeshProUGUI secondRewardAmount;
 
+        public Quest thisQuest;
+
+        private void Start()
+        {
+            trackingButton.onClick.AddListener(() =>
+            {
+                if (isActive)       // 퀘스트가 활성화 되어있는지
+                {
+                    if (isTracking)
+                    {
+                        isTracking = false;
+                        trackingButton.gameObject.GetComponentInChildren<TextMeshProUGUI>().text = "Track";
+                        QuestManager.Instance.UnTrackQuest(thisQuest);
+                    }
+                    else
+                    {
+                        isTracking = true;
+                        trackingButton.gameObject.GetComponentInChildren<TextMeshProUGUI>().text = "Tracking";
+                        QuestManager.Instance.TrackQuest(thisQuest);
+                    }
+                }
+
+            });
+        }
+
+
     }
 }
