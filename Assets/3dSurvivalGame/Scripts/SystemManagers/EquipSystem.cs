@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -76,9 +76,9 @@ namespace SUR
 
         void SelectQuickSlot(int number)
         {
-            if (checkIfSlotIsFull(number) == true) // ¾È¿¡ ¹°°ÇÀÌ ÀÖ¾î¾ß ¼±ÅÃÇÒ ¼ö ÀÖ±â ¶§¹®¿¡ true
+            if (checkIfSlotIsFull(number) == true) // ì•ˆì— ë¬¼ê±´ì´ ìˆì–´ì•¼ ì„ íƒí•  ìˆ˜ ìˆê¸° ë•Œë¬¸ì— true
             {
-               if(selectedNumber != number)  // ±âÁ¸ ¼±ÅÃµÈ ¹øÈ£°¡ ¾Æ´Ò ½Ã
+               if(selectedNumber != number)  // ê¸°ì¡´ ì„ íƒëœ ë²ˆí˜¸ê°€ ì•„ë‹ ì‹œ
                 {
                     selectedNumber = number;
 
@@ -104,10 +104,10 @@ namespace SUR
                 }
 
 
-                // ¼±ÅÃµÈ ¹øÈ£¸¦ ¶Ç´Ù½Ã ¼±ÅÃÇÔ (1¹ø ½½·ÔÀ» 1 ¹øÀ» ´Ù½Ã ´©¸£¸é ºñÈ°¼ºÈ­ µÇ°Ô)
+                // ì„ íƒëœ ë²ˆí˜¸ë¥¼ ë˜ë‹¤ì‹œ ì„ íƒí•¨ (1ë²ˆ ìŠ¬ë¡¯ì„ 1 ë²ˆì„ ë‹¤ì‹œ ëˆ„ë¥´ë©´ ë¹„í™œì„±í™” ë˜ê²Œ)
                 else
                 {
-                    selectedNumber = -1;  // -1 Àº null ÀÌ¶û °°ÀºÀÇ¹Ì 
+                    selectedNumber = -1;  // -1 ì€ null ì´ë‘ ê°™ì€ì˜ë¯¸ 
                                           // unselect previously selectedItem
                     if (selectedItem != null)  // something else is selected
                     {
@@ -119,7 +119,7 @@ namespace SUR
                     {
                         DestroyImmediate(selectedItemModel.gameObject);   
                         selectedItemModel = null; 
-                        // destroy ¸¸ ÇÏ¸é selectedItemModel °ªÀÌ inspector ¿¡¼­ missing À¸·Î Ç¥½ÃµÇ±â¶§¹®¿¡ null °ªÀ¸·Î Àç¼³Á¤ ÇØÁÜ 
+                        // destroy ë§Œ í•˜ë©´ selectedItemModel ê°’ì´ inspector ì—ì„œ missing ìœ¼ë¡œ í‘œì‹œë˜ê¸°ë•Œë¬¸ì— null ê°’ìœ¼ë¡œ ì¬ì„¤ì • í•´ì¤Œ 
                         Debug.Log("Currently Selected Model destroyed");
                     }
 
@@ -134,7 +134,7 @@ namespace SUR
 
         private void SetEquippedModel(GameObject selectedItem)
         {
-            // ÀÌ¹Ì ¼±ÅÃµÈ ¾ÆÀÌÅÛÀÌ ÀÖÀ¸¸é, ±× ¾ÆÀÌÅÛÀ» Áö¿ì°í ÇöÀç ¼±ÅÃµÈ ¾ÆÀÌÅÛÀ» »ı¼º
+            // ì´ë¯¸ ì„ íƒëœ ì•„ì´í…œì´ ìˆìœ¼ë©´, ê·¸ ì•„ì´í…œì„ ì§€ìš°ê³  í˜„ì¬ ì„ íƒëœ ì•„ì´í…œì„ ìƒì„±
             if (selectedItemModel != null)
             {
                 DestroyImmediate(selectedItemModel.gameObject);
@@ -181,7 +181,7 @@ namespace SUR
         public void AddToQuickSlots(GameObject itemToEquip)
         {            
             GameObject availableSlot = FindNextEmptySlot();
-            itemToEquip.transform.SetParent(availableSlot.transform, false);  // bool ÇüÀº worldPos À» À§ÇÑ bool. true ·Î ÇØ³õÀ¸¸é À§Ä¡´Â ±×´ë·Î, ºÎ¸ğ¿ÀºêÁ§Æ®¸¸ ¹Ù²ñ
+            itemToEquip.transform.SetParent(availableSlot.transform, false);  // bool í˜•ì€ worldPos ì„ ìœ„í•œ bool. true ë¡œ í•´ë†“ìœ¼ë©´ ìœ„ì¹˜ëŠ” ê·¸ëŒ€ë¡œ, ë¶€ëª¨ì˜¤ë¸Œì íŠ¸ë§Œ ë°”ë€œ
             string cleanName = itemToEquip.name.Replace("(Clone)", "");
             itemList.Add(cleanName);
 

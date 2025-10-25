@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -157,7 +157,7 @@ namespace SUR
         }
 
         // function that checks inventory status
-        public bool CheckSlotsAvailable(int emptyNeeded)        // ÇÊ¿äÇÑ ¿©À¯ Ä­ÀÌ ¸î°³ÀÎÁö 
+        public bool CheckSlotsAvailable(int emptyNeeded)        // í•„ìš”í•œ ì—¬ìœ  ì¹¸ì´ ëª‡ê°œì¸ì§€ 
         {
             int emptySlot = 0;
 
@@ -183,10 +183,10 @@ namespace SUR
         {
             int counter = amountToRemove;
 
-            // ÀÎº¥Åä¸®ÀÇ ¾ÆÀÌÅÛÀ» µÚ¿¡¼­ºÎÅÍ Áö¿ì±â À§ÇØ, 3°³ÀÇ ¾ÆÀÌÅÛÀ» Áö¿ö¾ßÇÏ¸é 3¹ø ¹İº¹¹®À» µ¹¾Æ°¡°Ô ÇÏ±â À§ÇØ for¹® »ç¿ë
+            // ì¸ë²¤í† ë¦¬ì˜ ì•„ì´í…œì„ ë’¤ì—ì„œë¶€í„° ì§€ìš°ê¸° ìœ„í•´, 3ê°œì˜ ì•„ì´í…œì„ ì§€ì›Œì•¼í•˜ë©´ 3ë²ˆ ë°˜ë³µë¬¸ì„ ëŒì•„ê°€ê²Œ í•˜ê¸° ìœ„í•´ forë¬¸ ì‚¬ìš©
             for(var i = slotList.Count - 1; i >= 0; i--)
             {
-                // childCount > 0 Àº ½½·Ô¿¡ ¾ÆÀÌÅÛÀÌ ÀÖ´Ù´Â ¶æ (Áï 1°³ > 0)
+                // childCount > 0 ì€ ìŠ¬ë¡¯ì— ì•„ì´í…œì´ ìˆë‹¤ëŠ” ëœ» (ì¦‰ 1ê°œ > 0)
                 if (slotList[i].transform.childCount > 0)
                 {
                     if (slotList[i].transform.GetChild(0).name == nameToRemove + "(Clone)" && counter != 0)
@@ -209,7 +209,7 @@ namespace SUR
 
             foreach(GameObject slot in slotList)
             {
-                // itemList(stringÇü½Ä)À» Å¬¸®¾îÇÏ°í, ½½·ÔÀ» °Ë»çÇØ¼­ ¾ÆÀÌÅÛÀÌ ÀÖ´Ù¸é ½½·ÔÀÇ ¾ÆÀÌÅÛ µÚ (Clone) À» Á¦°ÅÇÑ µÚ itemList(string) ¿¡ ´Ù½Ã Ãß°¡
+                // itemList(stringí˜•ì‹)ì„ í´ë¦¬ì–´í•˜ê³ , ìŠ¬ë¡¯ì„ ê²€ì‚¬í•´ì„œ ì•„ì´í…œì´ ìˆë‹¤ë©´ ìŠ¬ë¡¯ì˜ ì•„ì´í…œ ë’¤ (Clone) ì„ ì œê±°í•œ ë’¤ itemList(string) ì— ë‹¤ì‹œ ì¶”ê°€
                 if(slot.transform.childCount > 0)
                 {
                     string name = slot.transform.GetChild(0).name;      // item (Clone)                                        
@@ -221,7 +221,7 @@ namespace SUR
             }
         }
 
-        // QeustManager TrackerUI ¿¡¼­ »ç¿ëµÊ
+        // QeustManager TrackerUI ì—ì„œ ì‚¬ìš©ë¨
         public int CheckItemAmount(string name)
         {
             int itemCounter = 0;

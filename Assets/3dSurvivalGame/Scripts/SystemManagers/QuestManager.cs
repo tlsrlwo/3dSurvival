@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using Unity.VisualScripting.Antlr3.Runtime;
@@ -10,17 +10,17 @@ namespace SUR
     {
         public static QuestManager Instance { get; set; }
 
-        public List<Quest> allActiveQuests;             // Äù½ºÆ®¸¦ ¼ö¶ôÇÏ¸é ÀÌ List¿¡ Ãß°¡µÊ
-        public List<Quest> allCompletedQuests;          // ¹Ì¼ÇÀ» ¿Ï·áÇÏ¸é ÀÌ List¿¡ Ãß°¡µÊ
+        public List<Quest> allActiveQuests;             // í€˜ìŠ¤íŠ¸ë¥¼ ìˆ˜ë½í•˜ë©´ ì´ Listì— ì¶”ê°€ë¨
+        public List<Quest> allCompletedQuests;          // ë¯¸ì…˜ì„ ì™„ë£Œí•˜ë©´ ì´ Listì— ì¶”ê°€ë¨
 
         [Header("QuestMenu")]
-        public GameObject questMenu;                    // Äù½ºÆ® ¸Ş´ºÃ¢ canvas
+        public GameObject questMenu;                    // í€˜ìŠ¤íŠ¸ ë©”ë‰´ì°½ canvas
         public bool isQuestMenuOpen;
 
         public GameObject activeQuestPrefab;            // 
         public GameObject completedQuestPrefab;         //
 
-        public GameObject questMenuContent;             // ÄÜÅÙÃ÷¸¦ Ãß°¡ÇÒ ½ºÅ©·ÑºäÀÇ content
+        public GameObject questMenuContent;             // ì½˜í…ì¸ ë¥¼ ì¶”ê°€í•  ìŠ¤í¬ë¡¤ë·°ì˜ content
 
         [Header("QuestTracker")]
         public GameObject questTrackerContent;
@@ -43,7 +43,7 @@ namespace SUR
             }
         }
 
-        // Q ¹öÆ° ´­·¯¼­ UI ¿­±â´İ±â
+        // Q ë²„íŠ¼ ëˆŒëŸ¬ì„œ UI ì—´ê¸°ë‹«ê¸°
         private void Update()
         {
             if (Input.GetKeyDown(KeyCode.Q) && !isQuestMenuOpen && !ConstructionManager.Instance.inConstructionMode)
@@ -77,7 +77,7 @@ namespace SUR
 
 
         #region QuestUI
-        // ¸Å°³º¯¼ö·Î quest¸¦ ¹Ş¾Æ¼­ questList¿¡ Ãß°¡ÇØÁÜ. NPC½ºÅ©¸³Æ®¿¡¼­ ÂüÁ¶µÊ(Äù½ºÆ®¸¦ ¼ö¶ôÇÏ´Â ºÎºĞ)
+        // ë§¤ê°œë³€ìˆ˜ë¡œ questë¥¼ ë°›ì•„ì„œ questListì— ì¶”ê°€í•´ì¤Œ. NPCìŠ¤í¬ë¦½íŠ¸ì—ì„œ ì°¸ì¡°ë¨(í€˜ìŠ¤íŠ¸ë¥¼ ìˆ˜ë½í•˜ëŠ” ë¶€ë¶„)
         public void AddActiveQuest(Quest quest)
         {
             allActiveQuests.Add(quest);
@@ -85,13 +85,13 @@ namespace SUR
             RefreshQuestList();
         }
 
-        // active Äù½ºÆ® Á¦°Å ÈÄ completed¿¡ Ãß°¡ÇØÁÖ´Â ÇÔ¼ö. NPC½ºÅ©¸³Æ®¿¡¼­ ÂüÁ¶µÊ(Äù½ºÆ® º¸»ó ¹Ş´Â ºÎºĞ)
+        // active í€˜ìŠ¤íŠ¸ ì œê±° í›„ completedì— ì¶”ê°€í•´ì£¼ëŠ” í•¨ìˆ˜. NPCìŠ¤í¬ë¦½íŠ¸ì—ì„œ ì°¸ì¡°ë¨(í€˜ìŠ¤íŠ¸ ë³´ìƒ ë°›ëŠ” ë¶€ë¶„)
         public void MarkQuestCompleted(Quest quest)
         {
-            // active list ¿¡¼­ Á¦°Å
+            // active list ì—ì„œ ì œê±°
             allActiveQuests.Remove(quest);
 
-            // completed list ¿¡ Ãß°¡
+            // completed list ì— ì¶”ê°€
             allCompletedQuests.Add(quest);
 
             UnTrackQuest(quest);
@@ -101,21 +101,21 @@ namespace SUR
 
         public void RefreshQuestList()
         {
-            // Ãß°¡ÇÏ±â Àü¿¡ ±âÁ¸ Ç°¸ñµé »èÁ¦ÇÏ°í ´Ù½Ã ¹Ø¿¡ ÄÚµå ½ÇÇà. ±×·¡¾ß È°¼ºÈ­µÈ Äù½ºÆ®°¡ ¿Ï·áµÇµµ prefabÀÌ scroll¿¡ ³²¾ÆÀÖ´Â Çö»óÀÌ ¾È ÀÏ¾î³²
+            // ì¶”ê°€í•˜ê¸° ì „ì— ê¸°ì¡´ í’ˆëª©ë“¤ ì‚­ì œí•˜ê³  ë‹¤ì‹œ ë°‘ì— ì½”ë“œ ì‹¤í–‰. ê·¸ë˜ì•¼ í™œì„±í™”ëœ í€˜ìŠ¤íŠ¸ê°€ ì™„ë£Œë˜ë„ prefabì´ scrollì— ë‚¨ì•„ìˆëŠ” í˜„ìƒì´ ì•ˆ ì¼ì–´ë‚¨
             foreach(Transform child in questMenuContent.transform)
             {
                 Destroy(child.gameObject);
             }
 
 
-            // È°¼ºÈ­µÈ Äù½ºÆ®µé
+            // í™œì„±í™”ëœ í€˜ìŠ¤íŠ¸ë“¤
             foreach(Quest activeQuest in allActiveQuests)
             {
-                // activeQuestPrefab À» »ı¼ºÇØ¼­ questMenuContentÀÇ ÀÚ½Ä¿ÀºêÁ§Æ®·Î ³Ö´Â´Ù
+                // activeQuestPrefab ì„ ìƒì„±í•´ì„œ questMenuContentì˜ ìì‹ì˜¤ë¸Œì íŠ¸ë¡œ ë„£ëŠ”ë‹¤
                 GameObject questPrefab = Instantiate(activeQuestPrefab, Vector3.zero, Quaternion.identity);
                 questPrefab.transform.SetParent(questMenuContent.transform, false);
 
-                // quesPrefabÀÇ QuestRow ½ºÅ©¸³Æ®¿¡ Á¢±Ù
+                // quesPrefabì˜ QuestRow ìŠ¤í¬ë¦½íŠ¸ì— ì ‘ê·¼
                 QuestRow qRow = questPrefab.GetComponent<QuestRow>();
 
                 qRow.thisQuest = activeQuest;
@@ -129,14 +129,14 @@ namespace SUR
                 qRow.coinAmount.text = $"{activeQuest.info.coinReward}";
 
                 //qRow.firstReward.sprite = "";
-                qRow.firstRewardAmount.text = "";       // ÇöÀç questInfo ¿¡ ¼³Á¤µÈ °ªÀÌ ¾ø¾î¼­ ºñ¿ö³õÀ½
-                // Row.firstRewardAmount.text = activeQuest.info.º¸»ó¼ö·®; À¸·Î ÇÏ¸é µÊ
+                qRow.firstRewardAmount.text = "";       // í˜„ì¬ questInfo ì— ì„¤ì •ëœ ê°’ì´ ì—†ì–´ì„œ ë¹„ì›Œë†“ìŒ
+                // Row.firstRewardAmount.text = activeQuest.info.ë³´ìƒìˆ˜ëŸ‰; ìœ¼ë¡œ í•˜ë©´ ë¨
 
                 //qRow.secondReward.sprite = "";
                 qRow.secondRewardAmount.text = "";
 
             }
-            // ¿Ï·áµÈ Äù½ºÆ®µé
+            // ì™„ë£Œëœ í€˜ìŠ¤íŠ¸ë“¤
             foreach (Quest completedQuests in allCompletedQuests)
             {
                 
@@ -182,7 +182,7 @@ namespace SUR
 
         public void RefreshTrackerList()
         {
-            // ±âÁ¸ ¸®½ºÆ® Á¦°Å. ÁßÃ¸ ¸·±âÀ§ÇØ
+            // ê¸°ì¡´ ë¦¬ìŠ¤íŠ¸ ì œê±°. ì¤‘ì²© ë§‰ê¸°ìœ„í•´
             foreach (Transform child in questTrackerContent.transform)
             {
                 Destroy(child.gameObject);
@@ -203,20 +203,20 @@ namespace SUR
                 var req2 = trackedQuest.info.secondRequirementItem;                 // string
                 var req2Amount = trackedQuest.info.secondRequirementAmount;         // int
 
-                if (req2 != "")   // ¿ä±¸Á¶°ÇÀÌ 2°³
+                if (req2 != "")   // ìš”êµ¬ì¡°ê±´ì´ 2ê°œ
                 {
                     tRow.requirements.text =
                         $"{req1}" + InventorySystem.Instance.CheckItemAmount(req1) + "/" + $"{req1Amount}\n" +
                         $"{req2}" + InventorySystem.Instance.CheckItemAmount(req2) + "/" + $"{req2Amount}\n";
                 }
-                else              // ¿ä±¸Á¶°ÇÀÌ 1°³
+                else              // ìš”êµ¬ì¡°ê±´ì´ 1ê°œ
                 {
                     tRow.requirements.text =
                         $"{req1}" + InventorySystem.Instance.CheckItemAmount(req1) + "/" + $"{req1Amount}\n";
                 }
 
 
-               /* if (trackedQuest.info.secondRequirementItem != "") //¿ä±¸Á¶°ÇÀÌ 2°³¸é
+               /* if (trackedQuest.info.secondRequirementItem != "") //ìš”êµ¬ì¡°ê±´ì´ 2ê°œë©´
                 {
                     tRow.requirements.text = 
                         $"{trackedQuest.info.firstRequirementItem}" + InventorySystem.Instance.CheckItemAmount(trackedQuest.info.firstRequirementItem) + "0/" + $"{trackedQuest.info.firstRequirementAmount}\n" +
